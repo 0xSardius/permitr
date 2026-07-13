@@ -54,6 +54,8 @@ Per evaluated payment, a SAS attestation: payment ref, mint, verdict, issuer pat
 ### Layer 3 — Examiner View (web)
 Renders any SAS attestation as a plain-English audit record with citations, shareable by link. **This is the judge-facing artifact — build it, don't skip it.** Must carry the §8 disclaimer visibly.
 
+**Stack decision:** Next.js on Vercel — chosen for the judging surface, not the tech: a stable production URL for the §9 shareable-link deliverable and the §10 QR close, plus server-rendered link previews so a pasted link reads as an audit document ("Permitr Audit Record — Blocked: ShadyUSD — GENIUS Act §3(a)"). Scope-guarded to one dynamic route + address input; styled as a document (think "a PDF that happens to be a webpage"), never a dashboard.
+
 ### Layer 4 — Permitr Agent (demo consumer)
 TypeScript; CDP Solana server wallet; x402 SVM "exact" scheme; USDC (SPL) on devnet. Flow: request gated resource → `402` → query registry on offered mint → non-permitted → **block with cited reason** → reroute to a permitted mint → pay → emit SAS attestation. Gated resource = a chapter of the book.
 
