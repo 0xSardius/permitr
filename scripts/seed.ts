@@ -56,7 +56,27 @@ type SeedRecord = {
 };
 
 function loadSeed(name: string): SeedRecord {
-  return JSON.parse(readFileSync(path.join(seedDir, name), "utf8"));
+  const seed: SeedRecord = JSON.parse(
+    readFileSync(path.join(seedDir, name), "utf8"),
+  );
+  // Preflight: on-chain limits are BYTES (Rust str::len), not chars —
+  // §/—/≤ are multi-byte. Fail fast with the exact offending field.
+  for (const [field, cites] of Object.entries({
+    pathwayBasis: seed.pathwayBasis,
+    statusBasis: seed.statusBasis,
+    reserveBasis: seed.reserveBasis,
+    redemptionBasis: seed.redemptionBasis,
+  })) {
+    for (const c of cites) {
+      const refLen = Buffer.byteLength(c.reference);
+      const sumLen = Buffer.byteLength(c.summary);
+      if (refLen > 96 || sumLen > 160)
+        throw new Error(
+          `${name} ${field}: reference=${refLen}B (max 96) summary=${sumLen}B (max 160)`,
+        );
+    }
+  }
+  return seed;
 }
 
 function toCitations(cs: SeedCitation[]): Citation[] {

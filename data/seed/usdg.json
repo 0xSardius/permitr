@@ -11,7 +11,7 @@
     {
       "authority": "Statute",
       "reference": "GENIUS Act §18(a), §2(12), PL 119-27",
-      "summary": "A foreign issuer is not a permitted issuer (§2(12)); §18(a) exempts it from the §3 prohibition only upon Treasury comparability, OCC registration, US reserves."
+      "summary": "Foreign issuers are not permitted issuers (§2(12)); §18(a) exempts them from §3 only upon Treasury comparability, OCC registration, and US reserves."
     }
   ],
   "statusBasis": [
@@ -25,7 +25,7 @@
     {
       "authority": "Statute",
       "reference": "GENIUS Act §18(a)(3), PL 119-27",
-      "summary": "A qualifying foreign issuer must hold reserves in a US financial institution sufficient to meet US customers' liquidity demands, absent a reciprocal arrangement."
+      "summary": "Must hold reserves in a US financial institution sufficient to meet US customers' liquidity demands, unless a reciprocal arrangement permits otherwise."
     }
   ],
   "redemptionBasis": [

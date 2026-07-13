@@ -18,7 +18,7 @@
     {
       "authority": "Statute",
       "reference": "GENIUS Act §3(a), §3(g), PL 119-27",
-      "summary": "§3(a): unlawful for any person other than a permitted issuer to issue a payment stablecoin in the US; §3(g): the coin is not a cash equivalent or settlement asset."
+      "summary": "§3(a) makes issuance by non-permitted issuers unlawful; under §3(g) the coin is not a cash equivalent, eligible collateral, or a settlement asset."
     }
   ],
   "reserveBasis": [
