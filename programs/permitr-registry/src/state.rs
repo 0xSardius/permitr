@@ -107,6 +107,17 @@ pub struct Citation {
     pub summary: String,
 }
 
+/// Which citation basis a `set_citation_basis` call targets. Citations are
+/// written one basis per transaction: a full record with four 2-citation
+/// vecs exceeds the 1232-byte transaction limit.
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, PartialEq, Eq, InitSpace)]
+pub enum BasisKind {
+    Pathway,
+    Status,
+    Reserve,
+    Redemption,
+}
+
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, PartialEq, Eq, InitSpace)]
 pub enum CiteSource {
     /// PL 119-27 sections.

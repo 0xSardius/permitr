@@ -2,16 +2,14 @@ use anchor_lang::prelude::*;
 
 use crate::{constants::*, error::RegistryError, state::*};
 
+/// Core fields only — citations are written separately via
+/// `set_citation_basis` (a full record exceeds the transaction size limit).
 #[derive(AnchorSerialize, AnchorDeserialize, Clone)]
 pub struct IssuerRecordArgs {
     pub issuer_name: String,
     pub pathway: Pathway,
     pub federal_subtype: FederalSubtype,
     pub status: Status,
-    pub pathway_basis: Vec<Citation>,
-    pub status_basis: Vec<Citation>,
-    pub reserve_basis: Vec<Citation>,
-    pub redemption_basis: Vec<Citation>,
 }
 
 #[derive(Accounts)]
@@ -49,10 +47,9 @@ pub fn handle_upsert_issuer_record(
     record.pathway = args.pathway;
     record.federal_subtype = args.federal_subtype;
     record.status = args.status;
-    record.pathway_basis = args.pathway_basis;
-    record.status_basis = args.status_basis;
-    record.reserve_basis = args.reserve_basis;
-    record.redemption_basis = args.redemption_basis;
+    // Citation bases are preserved across upserts and written via
+    // set_citation_basis; a fresh record starts with empty bases that the
+    // seed flow must fill before the record is demo-complete.
     // Pin the version the classification was authored under — this is what
     // attestations cite, making every verdict auditable against a point in time.
     record.registry_version = ctx.accounts.config.version;
@@ -107,31 +104,6 @@ fn validate(args: &IssuerRecordArgs) -> Result<()> {
         args.issuer_name.len() <= MAX_ISSUER_NAME_LEN as usize,
         RegistryError::IssuerNameTooLong
     );
-
-    for basis in [
-        &args.pathway_basis,
-        &args.status_basis,
-        &args.reserve_basis,
-        &args.redemption_basis,
-    ] {
-        require!(
-            !basis.is_empty() && basis.len() <= MAX_CITATIONS_PER_BASIS as usize,
-            RegistryError::CitationCountInvalid
-        );
-        // The book is the analysis layer; primary authority must be law or
-        // official action.
-        require!(
-            basis[0].authority != CiteSource::BookSection,
-            RegistryError::BookSectionCannotBePrimary
-        );
-        for cite in basis {
-            require!(
-                cite.reference.len() <= MAX_CITE_REFERENCE_LEN as usize
-                    && cite.summary.len() <= MAX_CITE_SUMMARY_LEN as usize,
-                RegistryError::CitationTooLong
-            );
-        }
-    }
 
     Ok(())
 }

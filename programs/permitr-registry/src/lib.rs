@@ -31,6 +31,14 @@ pub mod permitr_registry {
         instructions::upsert_issuer_record::handle_upsert_issuer_record(ctx, args)
     }
 
+    pub fn set_citation_basis(
+        ctx: Context<SetCitationBasis>,
+        kind: BasisKind,
+        citations: Vec<Citation>,
+    ) -> Result<()> {
+        instructions::set_citation_basis::handle_set_citation_basis(ctx, kind, citations)
+    }
+
     pub fn bump_registry_version(ctx: Context<BumpRegistryVersion>) -> Result<()> {
         instructions::bump_registry_version::handle_bump_registry_version(ctx)
     }
