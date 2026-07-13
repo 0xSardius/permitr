@@ -1,0 +1,38 @@
+{
+  "_draft": true,
+  "_review": "DRAFT — pending author review. Current (v2) classification after the Dec 2025 charter conversion.",
+  "mint": "CXk2AMBfi3TwaEL2468s6zP8xq9NxTXjp9gjMgzeUynM",
+  "mintNote": "Paxos-published devnet PYUSD (Token-2022). Mainnet display ref: 2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo",
+  "issuerName": "Paxos Trust Company (OCC national trust)",
+  "pathway": "FederalQualified",
+  "federalSubtype": "UninsuredNationalBank",
+  "status": "PathwayQualified",
+  "pathwayBasis": [
+    {
+      "authority": "Statute",
+      "reference": "GENIUS Act §2(23)(B), §2(11)(B), PL 119-27",
+      "summary": "Permitted issuers include Federal qualified payment stablecoin issuers; §2(11)(B) covers uninsured national banks chartered by the Comptroller."
+    }
+  ],
+  "statusBasis": [
+    {
+      "authority": "AgencyAction",
+      "reference": "OCC approval — Paxos NYDFS-to-national-trust conversion, completed Dec 12, 2025",
+      "summary": "Paxos converted to an OCC national trust charter Dec 12, 2025, moving PYUSD to federal oversight. Registry v1 records the prior state classification."
+    }
+  ],
+  "reserveBasis": [
+    {
+      "authority": "Statute",
+      "reference": "GENIUS Act §4(a)(1)(A), PL 119-27",
+      "summary": "Reserves must back outstanding stablecoins at least 1:1 in enumerated assets: currency, insured deposits, ≤93-day Treasuries, repos, government MMFs."
+    }
+  ],
+  "redemptionBasis": [
+    {
+      "authority": "Statute",
+      "reference": "GENIUS Act §4(a)(1)(B), PL 119-27",
+      "summary": "Issuer must publicly disclose a redemption policy with clear procedures for timely redemption; fee changes require at least 7 days' prior notice."
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "_draft": true,
+  "_review": "DRAFT — pending author review. The nuance beat: §18 exception identified, conditions unmet → blocked with cited path (negative-citation pattern).",
+  "mint": "2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH",
+  "mintNote": "USDG mainnet mint (Token-2022) — DISPLAY-ONLY reference; no devnet mint exists. Never transactable in the demo.",
+  "issuerName": "Paxos Digital Singapore Pte. Ltd. (MAS MPI)",
+  "pathway": "ForeignSection18",
+  "federalSubtype": "NotApplicable",
+  "status": "ExceptionConditionsUnmet",
+  "pathwayBasis": [
+    {
+      "authority": "Statute",
+      "reference": "GENIUS Act §18(a), §2(12), PL 119-27",
+      "summary": "A foreign issuer is not a permitted issuer (§2(12)); §18(a) exempts it from the §3 prohibition only upon Treasury comparability, OCC registration, US reserves."
+    }
+  ],
+  "statusBasis": [
+    {
+      "authority": "ProposedRule",
+      "reference": "Treasury GENIUS Act Implementation ANPRM, FR Doc. 2025-18226 (Sept 19, 2025)",
+      "summary": "No Treasury comparability determination for Singapore/MAS exists as of this registry version; §18(a) conditions are not currently satisfiable — blocked."
+    }
+  ],
+  "reserveBasis": [
+    {
+      "authority": "Statute",
+      "reference": "GENIUS Act §18(a)(3), PL 119-27",
+      "summary": "A qualifying foreign issuer must hold reserves in a US financial institution sufficient to meet US customers' liquidity demands, absent a reciprocal arrangement."
+    }
+  ],
+  "redemptionBasis": [
+    {
+      "authority": "ForeignRegime",
+      "reference": "MAS single-currency stablecoin framework (Singapore, finalized Aug 2023)",
+      "summary": "USDG redemption is governed by Singapore's MAS stablecoin framework; GENIUS §4(a)(1)(B) binds permitted issuers and does not apply to a §18 foreign issuer."
+    }
+  ]
+}

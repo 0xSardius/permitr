@@ -1,0 +1,38 @@
+{
+  "_draft": true,
+  "_review": "DRAFT — pending author review against the book. Sources verified Jul 13, 2026.",
+  "mint": "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
+  "mintNote": "Circle devnet USDC (transactable). Mainnet display ref: EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+  "issuerName": "Circle (Circle National Trust, N.A.)",
+  "pathway": "FederalQualified",
+  "federalSubtype": "UninsuredNationalBank",
+  "status": "PathwayQualified",
+  "pathwayBasis": [
+    {
+      "authority": "Statute",
+      "reference": "GENIUS Act §2(23)(B), §2(11)(B), PL 119-27",
+      "summary": "Permitted issuers include Federal qualified payment stablecoin issuers; §2(11)(B) covers uninsured national banks chartered by the Comptroller."
+    }
+  ],
+  "statusBasis": [
+    {
+      "authority": "AgencyAction",
+      "reference": "OCC final approval, Circle National Trust, N.A. (Jul 10, 2026)",
+      "summary": "OCC granted final approval for Circle's national trust bank Jul 10, 2026. No §5 approval exists pre-effective-date; classification is an anticipated pathway."
+    }
+  ],
+  "reserveBasis": [
+    {
+      "authority": "Statute",
+      "reference": "GENIUS Act §4(a)(1)(A), PL 119-27",
+      "summary": "Reserves must back outstanding stablecoins at least 1:1 in enumerated assets: currency, insured deposits, ≤93-day Treasuries, repos, government MMFs."
+    }
+  ],
+  "redemptionBasis": [
+    {
+      "authority": "Statute",
+      "reference": "GENIUS Act §4(a)(1)(B), PL 119-27",
+      "summary": "Issuer must publicly disclose a redemption policy with clear procedures for timely redemption; fee changes require at least 7 days' prior notice."
+    }
+  ]
+}

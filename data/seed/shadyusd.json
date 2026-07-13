@@ -1,0 +1,38 @@
+{
+  "_draft": true,
+  "_review": "DRAFT — pending author review. Fictional coin; the headline block beat.",
+  "mint": null,
+  "mintNote": "Self-minted on devnet by scripts/seed.ts; mint address filled in at seed time.",
+  "issuerName": "ShadyCo Global Ltd. (fictional, unregulated)",
+  "pathway": "NoPathway",
+  "federalSubtype": "NotApplicable",
+  "status": "NoPathwayIdentified",
+  "pathwayBasis": [
+    {
+      "authority": "Statute",
+      "reference": "GENIUS Act §2(23), PL 119-27",
+      "summary": "Issuer fits none of the three permitted-issuer categories (IDI subsidiary, Federal qualified, State qualified) and no §18 exception applies."
+    }
+  ],
+  "statusBasis": [
+    {
+      "authority": "Statute",
+      "reference": "GENIUS Act §3(a), §3(g), PL 119-27",
+      "summary": "§3(a): unlawful for any person other than a permitted issuer to issue a payment stablecoin in the US; §3(g): the coin is not a cash equivalent or settlement asset."
+    }
+  ],
+  "reserveBasis": [
+    {
+      "authority": "Statute",
+      "reference": "GENIUS Act §4(a)(1)(A), PL 119-27",
+      "summary": "No evidence of the 1:1 enumerated-asset reserve backing that any permitted-issuer pathway would require; no regulatory oversight identified."
+    }
+  ],
+  "redemptionBasis": [
+    {
+      "authority": "Statute",
+      "reference": "GENIUS Act §4(a)(1)(B), PL 119-27",
+      "summary": "No publicly disclosed redemption policy meeting the timely-redemption and fee-disclosure standard any permitted-issuer pathway would require."
+    }
+  ]
+}
