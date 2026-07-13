@@ -1,0 +1,22 @@
+skip_local_validator = true
+
+[toolchain]
+
+[features]
+resolution = true
+skip-lint = false
+
+[programs.devnet]
+permitr_registry = "3cwNTm2FHSViLLm2gVp62DqS2ttLbHigXWw4XDTbo35Y"
+
+[programs.localnet]
+permitr_registry = "3cwNTm2FHSViLLm2gVp62DqS2ttLbHigXWw4XDTbo35Y"
+
+[provider]
+cluster = "devnet"
+wallet = "~/.config/solana/id.json"
+
+[scripts]
+test = "cargo test"
+
+[hooks]
