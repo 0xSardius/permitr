@@ -5,13 +5,23 @@
  * queryRegistry into the paymentRequirementsSelector (the Permitr policy
  * hook) and the Vercel AI SDK agent loop around it.
  */
+import "dotenv/config";
 import { wrapFetchWithPayment, x402Client } from "@x402/fetch";
 import { registerExactSvmScheme } from "@x402/svm/exact/client";
+import { CdpClient } from "@coinbase/cdp-sdk";
+import { cdpKitSigner } from "../../sdk/cdp-signer.js";
 import { loadWallet } from "../../scripts/lib.js";
 
 const RESOURCE_URL = process.env.RESOURCE_URL ?? "http://localhost:4021/chapter";
 
-const signer = await loadWallet();
+// CDP server wallet when credentials are present; local keypair fallback.
+const signer = process.env.CDP_API_KEY_ID
+  ? cdpKitSigner(
+      await new CdpClient().solana.getOrCreateAccount({
+        name: "permitr-agent",
+      }),
+    )
+  : await loadWallet();
 console.log(`Paying as ${signer.address}`);
 
 const client = new x402Client();
