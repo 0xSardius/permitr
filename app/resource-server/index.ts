@@ -1,0 +1,72 @@
+/**
+ * Permitr resource server — x402-gated endpoint serving the book chapter.
+ *
+ * Day 2: single accepts entry (devnet USDC) against the keyless x402.org
+ * facilitator. Day 3 adds the ShadyUSD accepts entry (the block/reroute demo)
+ * and the CDP facilitator as primary.
+ */
+import express from "express";
+import { paymentMiddleware, x402ResourceServer } from "@x402/express";
+import { HTTPFacilitatorClient, type RoutesConfig } from "@x402/core/server";
+import { ExactSvmScheme } from "@x402/svm/exact/server";
+
+export const SOLANA_DEVNET = "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1" as const;
+export const USDC_DEVNET = "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU";
+
+const PAY_TO =
+  process.env.PAYTO_ADDRESS ?? "47mxV9vnVUkX8i5V8qDoHgauurV7w5Uc3cjH7Nk4rqBg";
+const PORT = Number(process.env.PORT ?? 4021);
+const FACILITATOR_URL =
+  process.env.FACILITATOR_URL ?? "https://x402.org/facilitator";
+
+const facilitator = new HTTPFacilitatorClient({ url: FACILITATOR_URL });
+const server = new x402ResourceServer(facilitator).register(
+  SOLANA_DEVNET,
+  new ExactSvmScheme(),
+);
+
+const routes: RoutesConfig = {
+  "GET /chapter": {
+    accepts: [
+      {
+        scheme: "exact",
+        network: SOLANA_DEVNET,
+        payTo: PAY_TO,
+        price: {
+          amount: "10000", // 0.01 USDC (6 decimals)
+          asset: USDC_DEVNET,
+        },
+      },
+    ],
+    description:
+      "Gated chapter: stablecoin qualification pathways under the GENIUS Act",
+    mimeType: "text/plain",
+  },
+};
+
+const app = express();
+app.use(paymentMiddleware(routes, server));
+
+app.get("/chapter", (_req, res) => {
+  // PLACEHOLDER — replaced by real book-chapter content supplied by the author.
+  res.type("text/plain").send(
+    [
+      "PERMITR GATED RESOURCE — SAMPLE CHAPTER (placeholder)",
+      "",
+      "[TODO(book): real chapter text goes here — author-supplied.]",
+      "",
+      "This content was unlocked by an x402 payment screened by the Permitr",
+      "registry. Not legal advice.",
+    ].join("\n"),
+  );
+});
+
+app.get("/healthz", (_req, res) => {
+  res.json({ ok: true, network: SOLANA_DEVNET, facilitator: FACILITATOR_URL });
+});
+
+app.listen(PORT, () => {
+  console.log(`Permitr resource server on :${PORT}`);
+  console.log(`  facilitator: ${FACILITATOR_URL}`);
+  console.log(`  payTo:       ${PAY_TO}`);
+});
