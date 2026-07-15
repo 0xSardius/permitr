@@ -9,9 +9,12 @@
     "seed": "tsx scripts/seed.ts",
     "verify-registry": "tsx scripts/verify-registry.ts",
     "resource-server": "tsx app/resource-server/index.ts",
-    "pay": "tsx app/agent/pay.ts"
+    "pay": "tsx app/agent/pay.ts",
+    "agent": "tsx app/agent/index.ts",
+    "demo": "tsx scripts/demo.ts"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^4.0.15",
     "@coinbase/cdp-sdk": "^1.52.0",
     "@solana-program/system": "^0.12.2",
     "@solana-program/token": "^0.14.0",
@@ -20,8 +23,10 @@
     "@x402/express": "^2.18.0",
     "@x402/fetch": "^2.18.0",
     "@x402/svm": "^2.18.0",
+    "ai": "^7.0.28",
     "express": "^5.2.1",
-    "sas-lib": "^1.0.10"
+    "sas-lib": "^1.0.10",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@codama/nodes-from-anchor": "^1.2.0",

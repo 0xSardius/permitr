@@ -33,6 +33,37 @@ x402 402 accepts:[mintA, mintB]          Permitr Registry (Anchor, devnet)
   Examiner View — plain-English audit record with citations
 ```
 
+## Quickstart (devnet)
+
+Prereqs: Node 20+, pnpm, Solana CLI (keypair at `~/.config/solana/id.json`, devnet). Rust/Anchor only needed to rebuild the program.
+
+```bash
+pnpm install
+
+# query the live registry (no funds needed)
+pnpm verify-registry       # all 4 seed verdicts + the fail-closed case
+
+# full demo: boots the gated server, agent screens/blocks/reroutes/pays/attests
+pnpm demo                  # AI-narrated with ANTHROPIC_API_KEY in .env;
+                           # deterministic output without it
+```
+
+Paying requires devnet USDC + SOL in the payer (CDP server wallet via `.env` credentials, or the local keypair as fallback — see `scripts/spike-cdp.ts` for programmatic faucets). Redeploying the registry: `anchor build && anchor deploy --provider.cluster devnet`, then `pnpm codegen && pnpm seed`.
+
+## Live on devnet (verify everything yourself)
+
+| Artifact | Address |
+|---|---|
+| Registry program | [`3cwNTm2FHSViLLm2gVp62DqS2ttLbHigXWw4XDTbo35Y`](https://explorer.solana.com/address/3cwNTm2FHSViLLm2gVp62DqS2ttLbHigXWw4XDTbo35Y?cluster=devnet) |
+| SAS credential (Permitr) | [`91qxSAdW6T3BshWVvP6o68hoLDrFfnFoeRNT68qP6ex8`](https://explorer.solana.com/address/91qxSAdW6T3BshWVvP6o68hoLDrFfnFoeRNT68qP6ex8?cluster=devnet) |
+| SAS schema (permitr-payment v1) | [`8fi4naNQJYMQ7uWpvBGMWbrvuvyf6vgp7eLvbTHTJb2Y`](https://explorer.solana.com/address/8fi4naNQJYMQ7uWpvBGMWbrvuvyf6vgp7eLvbTHTJb2Y?cluster=devnet) |
+| Sample block attestation (ShadyUSD rejected, §3(a) cited) | [`4Vx6rgL8uT4Fb6orbHsy2pn2NjS3GfVJAS6tLyhv2S7W`](https://explorer.solana.com/address/4Vx6rgL8uT4Fb6orbHsy2pn2NjS3GfVJAS6tLyhv2S7W?cluster=devnet) |
+| Sample rerouted-payment attestation | [`HwRxY1t1w3iPRnk5xoX43QiYe4P2ug8ysdzRYq35QYEy`](https://explorer.solana.com/address/HwRxY1t1w3iPRnk5xoX43QiYe4P2ug8ysdzRYq35QYEy?cluster=devnet) |
+| Sample x402 payment (devnet USDC) | [`4mFXX946…AnP9nL`](https://explorer.solana.com/tx/4mFXX946mvkfpYznVNJyQuzcFJRY4jdZQtuGdTdPNDoYPG1YGmKovu9ECYzVJ6C7TutiU4rbJEnEjDwdRpAnP9nL?cluster=devnet) |
+| ShadyUSD (fictional test mint) | `5pq1R1sx4xLW7YYjKLKr8dCPbFzahv7ppLDXAk5uXcxC` |
+
+Seed registry records (per-mint PDAs, seeds `["issuer", mint]`): USDC devnet `4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU` (federal pathway), PYUSD devnet `CXk2AMBfi3TwaEL2468s6zP8xq9NxTXjp9gjMgzeUynM` (the v1→v2 pathway-migration record), USDG mainnet ref `2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH` (§18 exception, conditions unmet → blocked), ShadyUSD (no pathway → blocked). Citations are DRAFT pending author review.
+
 ## Repo layout
 
 ```
