@@ -1,0 +1,195 @@
+/* Examiner View — a document, not a dashboard. */
+:root {
+  --paper: #fdfcf9;
+  --ink: #1a1a1c;
+  --muted: #5c5c66;
+  --rule: #d8d5cc;
+  --allow: #1c6b3c;
+  --allow-bg: #eaf5ee;
+  --block: #8c2020;
+  --block-bg: #f9ecec;
+  --reroute: #8a5a00;
+  --reroute-bg: #f8f1e2;
+  --accent: #24344d;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #ecebe6;
+  color: var(--ink);
+  font-family: Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia,
+    serif;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+main {
+  max-width: 46rem;
+  margin: 2.5rem auto 1rem;
+  padding: 3rem 3.25rem;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.08);
+}
+
+@media (max-width: 52rem) {
+  main {
+    margin: 0;
+    padding: 1.5rem 1.25rem;
+    border: none;
+  }
+}
+
+h1 {
+  font-size: 1.05rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 0.6rem;
+  margin: 0 0 0.4rem;
+}
+
+.docmeta {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-bottom: 1.8rem;
+}
+
+h2 {
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 2rem 0 0.6rem;
+}
+
+.banner {
+  padding: 0.9rem 1.1rem;
+  font-size: 1.15rem;
+  border-left: 5px solid;
+  margin: 1.4rem 0;
+}
+.banner.allowed {
+  color: var(--allow);
+  background: var(--allow-bg);
+  border-color: var(--allow);
+}
+.banner.blocked {
+  color: var(--block);
+  background: var(--block-bg);
+  border-color: var(--block);
+}
+.banner.rerouted {
+  color: var(--reroute);
+  background: var(--reroute-bg);
+  border-color: var(--reroute);
+}
+
+dl {
+  display: grid;
+  grid-template-columns: 11rem 1fr;
+  gap: 0.35rem 1rem;
+  margin: 0;
+}
+dt {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.cite {
+  border-left: 3px solid var(--rule);
+  padding: 0.4rem 0 0.4rem 1rem;
+  margin: 0.9rem 0;
+}
+.cite .authority {
+  display: inline-block;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--paper);
+  background: var(--accent);
+  padding: 0.1rem 0.5rem;
+  margin-right: 0.6rem;
+  vertical-align: 1px;
+}
+.cite .field {
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.cite .reference {
+  font-weight: 700;
+}
+.cite .summary {
+  margin: 0.25rem 0 0;
+  color: var(--ink);
+}
+
+code,
+.mono {
+  font-family: ui-monospace, "Cascadia Mono", Menlo, monospace;
+  font-size: 0.85em;
+}
+
+a {
+  color: var(--accent);
+}
+
+.verify {
+  font-size: 0.92rem;
+  padding: 0.6rem 0.9rem;
+  background: #f4f3ee;
+  border: 1px dashed var(--rule);
+}
+.verify.ok {
+  color: var(--allow);
+}
+.verify.fail {
+  color: var(--block);
+}
+
+.disclaimer {
+  max-width: 46rem;
+  margin: 0 auto 3rem;
+  padding: 1rem 3.25rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+form.lookup {
+  display: flex;
+  gap: 0.6rem;
+  margin: 1.4rem 0;
+}
+form.lookup input {
+  flex: 1;
+  font: inherit;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid var(--rule);
+  background: white;
+}
+form.lookup button {
+  font: inherit;
+  padding: 0.55rem 1.2rem;
+  background: var(--accent);
+  color: var(--paper);
+  border: none;
+  cursor: pointer;
+}
+
+ul.samples {
+  padding-left: 1.2rem;
+}
+ul.samples li {
+  margin: 0.4rem 0;
+}

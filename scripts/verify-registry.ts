@@ -6,8 +6,8 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { queryRegistry } from "../sdk/index.js";
-import { rpc } from "./lib.js";
+import { queryRegistry } from "../sdk/index";
+import { rpc } from "./lib";
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const shadyMint = readFileSync(

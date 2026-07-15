@@ -9,5 +9,6 @@
     "skipLibCheck": true,
     "noEmit": true
   },
-  "include": ["sdk", "scripts", "app"]
+  "include": ["sdk", "scripts", "app"],
+  "exclude": ["app/examiner"]
 }

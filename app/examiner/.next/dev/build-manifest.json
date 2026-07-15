@@ -1,0 +1,50 @@
+{
+  "pages": {
+    "/_app": [
+      "static/chunks/0_35_next_dist_compiled_0c7_-an._.js",
+      "static/chunks/0_35_next_dist_shared_lib_06m3z8h._.js",
+      "static/chunks/0_35_next_dist_client_1m7uhp5._.js",
+      "static/chunks/0_35_next_dist_1q3k-04._.js",
+      "static/chunks/0_35_next_app_067sze6.js",
+      "static/chunks/[next]_entry_page-loader_ts_0l2a8fr._.js",
+      "static/chunks/02ca_react-dom_0ntjfa7._.js",
+      "static/chunks/node_modules__pnpm_0qw32sy._.js",
+      "static/chunks/[root-of-the-server]__1zzzhz-._.js",
+      "static/chunks/app_examiner_pages__app_0du2_q-._.js",
+      "static/chunks/turbopack-app_examiner_pages__app_19iwrsw._.js"
+    ],
+    "/_error": [
+      "static/chunks/0_35_next_dist_compiled_0c7_-an._.js",
+      "static/chunks/0_35_next_dist_shared_lib_149ahlu._.js",
+      "static/chunks/0_35_next_dist_client_1m7uhp5._.js",
+      "static/chunks/0_35_next_dist_1mkjfoq._.js",
+      "static/chunks/[next]_entry_page-loader_ts_175-w8r._.js",
+      "static/chunks/02ca_react-dom_0ntjfa7._.js",
+      "static/chunks/node_modules__pnpm_0qw32sy._.js",
+      "static/chunks/[root-of-the-server]__1426pa0._.js",
+      "static/chunks/app_examiner_pages__error_0du2_q-._.js",
+      "static/chunks/turbopack-app_examiner_pages__error_1rtiwvl._.js"
+    ]
+  },
+  "devFiles": [],
+  "polyfillFiles": [
+    "static/chunks/0_35_next_dist_build_polyfills_polyfill-nomodule.js"
+  ],
+  "lowPriorityFiles": [
+    "static/development/_buildManifest.js",
+    "static/development/_ssgManifest.js",
+    "static/development/_clientMiddlewareManifest.js"
+  ],
+  "rootMainFiles": [
+    "static/chunks/[turbopack]_browser_dev_hmr-client_hmr-client_ts_20pqmyw._.js",
+    "static/chunks/0_35_next_dist_compiled_next-devtools_index_1s9exee.js",
+    "static/chunks/0_35_next_dist_compiled_react-dom_1can280._.js",
+    "static/chunks/0_35_next_dist_compiled_react-server-dom-turbopack_0z15o2b._.js",
+    "static/chunks/0_35_next_dist_compiled_1wcwibt._.js",
+    "static/chunks/0_35_next_dist_client_1dv-0mt._.js",
+    "static/chunks/0_35_next_dist_197-jwv._.js",
+    "static/chunks/0vvp_@swc_helpers_cjs_0vb02wp._.js",
+    "static/chunks/app_examiner_1anvha4._.js",
+    "static/chunks/turbopack-app_examiner_0gtylp8._.js"
+  ]
+}

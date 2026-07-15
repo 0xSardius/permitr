@@ -21,7 +21,7 @@ import {
   getCreateSchemaInstruction,
   serializeAttestationData,
 } from "sas-lib";
-import { loadWallet, rpc, sendIxs } from "./lib.js";
+import { loadWallet, rpc, sendIxs } from "./lib";
 
 const CREDENTIAL_NAME = "Permitr";
 const SCHEMA_NAME = "permitr-payment";

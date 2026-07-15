@@ -16,7 +16,7 @@ import {
   Pathway,
   Status,
   type Citation,
-} from "./generated/index.js";
+} from "./generated/index";
 
 export { CiteSource, FederalSubtype, Pathway, Status };
 

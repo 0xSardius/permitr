@@ -23,7 +23,7 @@ import { address } from "@solana/kit";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { loadWallet, rpc, sendIxs } from "./lib.js";
+import { loadWallet, rpc, sendIxs } from "./lib";
 import {
   fetchMaybeRegistryConfig,
   findConfigPda,
@@ -37,7 +37,7 @@ import {
   Pathway,
   Status,
   type Citation,
-} from "../sdk/generated/index.js";
+} from "../sdk/generated/index";
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const seedDir = path.join(root, "data/seed");

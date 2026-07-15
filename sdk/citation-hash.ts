@@ -7,7 +7,7 @@
  * the attestation cited exactly what the registry said at that version.
  */
 import { createHash } from "node:crypto";
-import { getCitationEncoder, type Citation } from "./generated/index.js";
+import { getCitationEncoder, type Citation } from "./generated/index";
 
 export function citationHash(bases: {
   pathwayBasis: Citation[];

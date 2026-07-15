@@ -14,7 +14,7 @@ import {
   getCreateAttestationInstruction,
   serializeAttestationData,
 } from "sas-lib";
-import { rpc, sendIxs } from "../scripts/lib.js";
+import { rpc, sendIxs } from "../scripts/lib";
 
 export const PERMITR_CREDENTIAL =
   "91qxSAdW6T3BshWVvP6o68hoLDrFfnFoeRNT68qP6ex8";

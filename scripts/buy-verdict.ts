@@ -5,9 +5,9 @@
  */
 import "dotenv/config";
 import { CdpClient } from "@coinbase/cdp-sdk";
-import { cdpKitSigner } from "../sdk/cdp-signer.js";
-import { permitrPay } from "../sdk/permitr-pay.js";
-import { loadWallet } from "./lib.js";
+import { cdpKitSigner } from "../sdk/cdp-signer";
+import { permitrPay } from "../sdk/permitr-pay";
+import { loadWallet } from "./lib";
 
 const mint = process.argv[2] ?? "CXk2AMBfi3TwaEL2468s6zP8xq9NxTXjp9gjMgzeUynM";
 const base = process.env.RESOURCE_URL_BASE ?? "http://localhost:4021";

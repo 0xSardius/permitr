@@ -152,7 +152,7 @@ Rationale: the panel contains actual lawyers and regulators. Stating this before
 
 ## 12. Roadmap (pitch slide)
 
-- **Permitr-as-an-x402-service:** expose the registry query itself as an x402-gated endpoint — any agent pays a micro-fee in USDC and receives `{verdict, pathway, citations}`. Flips Permitr from x402 *consumer* to *provider*, making it a machine-payable agent-to-agent settlement service (maps directly to Anchorage's Agent-to-Agent Settlement Rails category). Two-sided x402: one agent sells compliance data, another pays for it to gate its own payment.
+- ~~**Permitr-as-an-x402-service**~~ — **SHIPPED (Jul 15, ahead of roadmap):** `GET /verdict?mint=…` is live, priced 0.001 USDC per query. Any agent pays a micro-fee and receives `{verdict, pathway, citations, registryVersion}`; verified E2E with the payment for the compliance data itself compliance-screened. Two-sided x402 — consumer *and* provider (Anchorage Agent-to-Agent Settlement Rails category). Next: oracle-countersigned verdicts.
 - Issuer/regulator self-attestation via SAS.
 - Integrator SDK — every Solana neobank/fintech needs this by Jan 2027.
 - **Reserve-evidence layer** feeding the registry: pluggable independent evidence (Chainlink PoR/SmartData-NAV feeds, issuer monthly reports per §4(a)(1)(C), ZK proof-of-reserve-adequacy — Anchorage ZK-compliance category) under the §4(a)(1)(A) requirement the registry cites as authority. Stale or sub-1:1 evidence degrades a verdict — Permitr becomes a conditions *monitor*, not just a classifier.

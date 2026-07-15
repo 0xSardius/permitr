@@ -7,10 +7,10 @@
  */
 import "dotenv/config";
 import { CdpClient } from "@coinbase/cdp-sdk";
-import { cdpKitSigner } from "../../sdk/cdp-signer.js";
-import { Decision } from "../../sdk/attest.js";
-import { permitrPay, PermitrBlockError } from "../../sdk/permitr-pay.js";
-import { loadWallet } from "../../scripts/lib.js";
+import { cdpKitSigner } from "../../sdk/cdp-signer";
+import { Decision } from "../../sdk/attest";
+import { permitrPay, PermitrBlockError } from "../../sdk/permitr-pay";
+import { loadWallet } from "../../scripts/lib";
 
 const RESOURCE_URL = process.env.RESOURCE_URL ?? "http://localhost:4021/chapter";
 

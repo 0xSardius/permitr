@@ -19,10 +19,10 @@ import {
 import type { PaymentRequirements } from "@x402/core/types";
 import { registerExactSvmScheme } from "@x402/svm/exact/client";
 import type { KeyPairSigner, TransactionSigner } from "@solana/kit";
-import { queryRegistry, type Verdict } from "./index.js";
-import { citationHash } from "./citation-hash.js";
-import { Decision, emitPaymentAttestation } from "./attest.js";
-import { rpc } from "../scripts/lib.js";
+import { queryRegistry, type Verdict } from "./index";
+import { citationHash } from "./citation-hash";
+import { Decision, emitPaymentAttestation } from "./attest";
+import { rpc } from "../scripts/lib";
 
 const NA_PATHWAY = 255; // no record → no pathway byte; Examiner renders "n/a"
 const ZERO_HASH = new Uint8Array(32);

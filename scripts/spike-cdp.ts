@@ -7,7 +7,7 @@
 import "dotenv/config";
 import { CdpClient } from "@coinbase/cdp-sdk";
 import { address } from "@solana/kit";
-import { rpc } from "./lib.js";
+import { rpc } from "./lib";
 
 const USDC_DEVNET = address("4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU");
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));

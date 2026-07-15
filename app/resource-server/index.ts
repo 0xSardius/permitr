@@ -12,8 +12,8 @@ import { fileURLToPath } from "node:url";
 import { paymentMiddleware, x402ResourceServer } from "@x402/express";
 import { HTTPFacilitatorClient, type RoutesConfig } from "@x402/core/server";
 import { ExactSvmScheme } from "@x402/svm/exact/server";
-import { queryRegistry } from "../../sdk/index.js";
-import { rpc } from "../../scripts/lib.js";
+import { queryRegistry } from "../../sdk/index";
+import { rpc } from "../../scripts/lib";
 
 export const SOLANA_DEVNET = "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1" as const;
 export const USDC_DEVNET = "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU";

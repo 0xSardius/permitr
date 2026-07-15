@@ -15,11 +15,11 @@ import { generateText, tool, stepCountIs } from "ai";
 import { anthropic } from "@ai-sdk/anthropic";
 import { z } from "zod";
 import { CdpClient } from "@coinbase/cdp-sdk";
-import { cdpKitSigner } from "../../sdk/cdp-signer.js";
-import { queryRegistry } from "../../sdk/index.js";
-import { Decision } from "../../sdk/attest.js";
-import { permitrPay, PermitrBlockError } from "../../sdk/permitr-pay.js";
-import { loadWallet, rpc } from "../../scripts/lib.js";
+import { cdpKitSigner } from "../../sdk/cdp-signer";
+import { queryRegistry } from "../../sdk/index";
+import { Decision } from "../../sdk/attest";
+import { permitrPay, PermitrBlockError } from "../../sdk/permitr-pay";
+import { loadWallet, rpc } from "../../scripts/lib";
 
 const RESOURCE_URL =
   process.env.RESOURCE_URL ?? "http://localhost:4021/chapter";

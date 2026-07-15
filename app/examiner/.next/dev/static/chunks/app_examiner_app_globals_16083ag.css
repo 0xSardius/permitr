@@ -1,0 +1,209 @@
+/* [project]/app/examiner/app/globals.css [app-client] (css) */
+:root {
+  --paper: #fdfcf9;
+  --ink: #1a1a1c;
+  --muted: #5c5c66;
+  --rule: #d8d5cc;
+  --allow: #1c6b3c;
+  --allow-bg: #eaf5ee;
+  --block: #8c2020;
+  --block-bg: #f9ecec;
+  --reroute: #8a5a00;
+  --reroute-bg: #f8f1e2;
+  --accent: #24344d;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  background: #ecebe6;
+  margin: 0;
+  font-family: Charter, Bitstream Charter, Sitka Text, Cambria, Georgia, serif;
+  line-height: 1.55;
+}
+
+main {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  max-width: 46rem;
+  margin: 2.5rem auto 1rem;
+  padding: 3rem 3.25rem;
+  box-shadow: 0 1px 4px #00000014;
+}
+
+@media (max-width: 52rem) {
+  main {
+    border: none;
+    margin: 0;
+    padding: 1.5rem 1.25rem;
+  }
+}
+
+h1 {
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border-bottom: 2px solid var(--accent);
+  margin: 0 0 .4rem;
+  padding-bottom: .6rem;
+  font-size: 1.05rem;
+}
+
+.docmeta {
+  color: var(--muted);
+  margin-bottom: 1.8rem;
+  font-size: .85rem;
+}
+
+h2 {
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 2rem 0 .6rem;
+  font-size: .8rem;
+}
+
+.banner {
+  border-left: 5px solid;
+  margin: 1.4rem 0;
+  padding: .9rem 1.1rem;
+  font-size: 1.15rem;
+}
+
+.banner.allowed {
+  color: var(--allow);
+  background: var(--allow-bg);
+  border-color: var(--allow);
+}
+
+.banner.blocked {
+  color: var(--block);
+  background: var(--block-bg);
+  border-color: var(--block);
+}
+
+.banner.rerouted {
+  color: var(--reroute);
+  background: var(--reroute-bg);
+  border-color: var(--reroute);
+}
+
+dl {
+  grid-template-columns: 11rem 1fr;
+  gap: .35rem 1rem;
+  margin: 0;
+  display: grid;
+}
+
+dt {
+  color: var(--muted);
+  font-size: .9rem;
+}
+
+dd {
+  overflow-wrap: anywhere;
+  margin: 0;
+}
+
+.cite {
+  border-left: 3px solid var(--rule);
+  margin: .9rem 0;
+  padding: .4rem 0 .4rem 1rem;
+}
+
+.cite .authority {
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--paper);
+  background: var(--accent);
+  vertical-align: 1px;
+  margin-right: .6rem;
+  padding: .1rem .5rem;
+  font-size: .7rem;
+  display: inline-block;
+}
+
+.cite .field {
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-size: .75rem;
+}
+
+.cite .reference {
+  font-weight: 700;
+}
+
+.cite .summary {
+  color: var(--ink);
+  margin: .25rem 0 0;
+}
+
+code, .mono {
+  font-family: ui-monospace, Cascadia Mono, Menlo, monospace;
+  font-size: .85em;
+}
+
+a {
+  color: var(--accent);
+}
+
+.verify {
+  border: 1px dashed var(--rule);
+  background: #f4f3ee;
+  padding: .6rem .9rem;
+  font-size: .92rem;
+}
+
+.verify.ok {
+  color: var(--allow);
+}
+
+.verify.fail {
+  color: var(--block);
+}
+
+.disclaimer {
+  max-width: 46rem;
+  color: var(--muted);
+  margin: 0 auto 3rem;
+  padding: 1rem 3.25rem;
+  font-size: .85rem;
+}
+
+form.lookup {
+  gap: .6rem;
+  margin: 1.4rem 0;
+  display: flex;
+}
+
+form.lookup input {
+  font: inherit;
+  border: 1px solid var(--rule);
+  background: #fff;
+  flex: 1;
+  padding: .55rem .8rem;
+}
+
+form.lookup button {
+  font: inherit;
+  background: var(--accent);
+  color: var(--paper);
+  cursor: pointer;
+  border: none;
+  padding: .55rem 1.2rem;
+}
+
+ul.samples {
+  padding-left: 1.2rem;
+}
+
+ul.samples li {
+  margin: .4rem 0;
+}
+
+/*# sourceMappingURL=app_examiner_app_globals_16083ag.css.map*/
