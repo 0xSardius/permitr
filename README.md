@@ -1,3 +1,5 @@
+<img src="assets/logo.svg" width="320" alt="Permitr — certify the coin">
+
 # Permitr
 
 **Permitted payment stablecoin certification for the GENIUS Act era.**
