@@ -11,7 +11,8 @@
     "resource-server": "tsx app/resource-server/index.ts",
     "pay": "tsx app/agent/pay.ts",
     "agent": "tsx app/agent/index.ts",
-    "demo": "tsx scripts/demo.ts"
+    "demo": "tsx scripts/demo.ts",
+    "buy-verdict": "tsx scripts/buy-verdict.ts"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^4.0.15",

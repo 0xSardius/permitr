@@ -127,6 +127,12 @@ Rationale: the panel contains actual lawyers and regulators. Stating this before
 5. **Examiner View (30s).** SAS attestation as a plain-English audit record. "The trail the industry says doesn't exist yet."
 6. **Close (30s).** KYA verifies the agent, Permitr verifies the asset; Anchorage RFS as demand. "The book is the spec; Permitr is the reference implementation." QR.
 
+### Pitch ammunition (verified during build week, Jul 13–15)
+
+1. **The naive-client proof.** The x402 default selector pays `accepts[0]` — we *observed* an unscreened client attempt the ShadyUSD payment (it failed only for lack of tokens). Permitr doesn't prevent a hypothetical; it prevents the protocol's **default behavior**. (Side-product: found and documented the `@x402/svm` selector-drop bug — upstream report filed = ecosystem credibility.)
+2. **The agent flags legal nuance unprompted.** In its first run, the agent's audit report noted that Circle's classification is "an anticipated pathway — no §5 approval exists pre-effective-date," verbatim from the registry's citation strings. Architecture doing the work: compliance enforced in code, precision stored in cited data, narration by the model — the LLM *cannot* invent a compliance decision.
+3. **Everything is independently verifiable.** Program, credential, schema, block attestations, payment attestations, and the payment itself are all linked from the README as devnet explorer URLs — judges can check every claim without trusting us.
+
 ## 11. Hard-question prep
 
 | Question | Answer |
@@ -141,6 +147,7 @@ Rationale: the panel contains actual lawyers and regulators. Stating this before
 | Is this legal advice? | No — §8. A cited, machine-readable mirror of public law. |
 | Rules change mid-build? | Versioned registry; attestations pin the version used at payment time. That's *better* audit practice, not a bug. |
 | Isn't this just a lookup table? | Lookup **+** issuer-pathway logic **+** onchain SAS attestation **+** examiner rendering **+** live agent integration. |
+| The check is client-side — can't an agent just skip it? | Yes, like every compliance control ever: OFAC screening doesn't make wires impossible, it makes checking cheap and skipping attributable. The product is the **attested decision**. Enforcement ladder: client selector (today) → server-side gating of `accepts` → onchain CPI `assert_permitted` → Token-2022 transfer hooks (PYUSD/USDG are already Token-2022 mints). Only an onchain registry can climb that ladder — a signed API can't bind a program. |
 | Why Solana, not Base? | SAS is compliance-native; native USDC; Visa/Mastercard settlement live; x402 volume is here. Deliberate, not default. |
 
 ## 12. Roadmap (pitch slide)

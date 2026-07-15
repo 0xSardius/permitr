@@ -136,7 +136,13 @@ export async function permitrPay(
   });
   registerExactSvmScheme(client, { signer });
   const fetchWithPay = wrapFetchWithPayment(fetch, client);
-  const response = await fetchWithPay(url);
+  let response = await fetchWithPay(url);
+  if (response.status === 402) {
+    // The x402.org devnet facilitator intermittently fails simulation under
+    // load; one paced retry makes the demo path reliable.
+    await new Promise((r) => setTimeout(r, 2_500));
+    response = await fetchWithPay(url);
+  }
 
   const responseHeader = response.headers.get("payment-response");
   const settle = responseHeader

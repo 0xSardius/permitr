@@ -12,6 +12,8 @@ import { fileURLToPath } from "node:url";
 import { paymentMiddleware, x402ResourceServer } from "@x402/express";
 import { HTTPFacilitatorClient, type RoutesConfig } from "@x402/core/server";
 import { ExactSvmScheme } from "@x402/svm/exact/server";
+import { queryRegistry } from "../../sdk/index.js";
+import { rpc } from "../../scripts/lib.js";
 
 export const SOLANA_DEVNET = "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1" as const;
 export const USDC_DEVNET = "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU";
@@ -39,6 +41,28 @@ const server = new x402ResourceServer(facilitator).register(
 );
 
 const routes: RoutesConfig = {
+  // ── Permitr as x402 PROVIDER ──────────────────────────────────────────
+  // The compliance report itself is machine-payable: any agent pays a
+  // micro-fee in USDC and receives {verdict, pathway, citations,
+  // registryVersion} — a compliance oracle priced per query, on the same
+  // rails it protects. (Two-sided x402: one agent sells compliance data,
+  // another buys it to gate its own payments.)
+  "GET /verdict": {
+    accepts: [
+      {
+        scheme: "exact",
+        network: SOLANA_DEVNET,
+        payTo: PAY_TO,
+        price: {
+          amount: "1000", // 0.001 USDC per verdict query
+          asset: USDC_DEVNET,
+        },
+      },
+    ],
+    description:
+      "Permitr compliance verdict: GENIUS Act issuer-pathway status for an SPL mint, with statutory citations and registry version",
+    mimeType: "application/json",
+  },
   "GET /chapter": {
     accepts: [
       // ShadyUSD listed FIRST — a naive client (default selector = first
@@ -84,6 +108,23 @@ app.get("/chapter", (_req, res) => {
       "registry. Not legal advice.",
     ].join("\n"),
   );
+});
+
+app.get("/verdict", async (req, res) => {
+  const mint = String(req.query.mint ?? "");
+  if (!mint) {
+    res.status(400).json({ error: "mint query parameter required" });
+    return;
+  }
+  // fail-closed inside queryRegistry: bad mint / no record / RPC error all
+  // resolve to status "Unknown", allowed=false — never a thrown 500.
+  const verdict = await queryRegistry(rpc, mint);
+  const { raw, ...report } = verdict; // raw account data stays internal
+  res.json({
+    ...report,
+    disclaimer:
+      "Machine-readable mirror of public law with citations. Not legal advice; classifications are illustrative as of the registry version shown.",
+  });
 });
 
 app.get("/healthz", (_req, res) => {
