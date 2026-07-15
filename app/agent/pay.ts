@@ -6,44 +6,59 @@
  * hook) and the Vercel AI SDK agent loop around it.
  */
 import "dotenv/config";
-import { wrapFetchWithPayment, x402Client } from "@x402/fetch";
-import { registerExactSvmScheme } from "@x402/svm/exact/client";
 import { CdpClient } from "@coinbase/cdp-sdk";
 import { cdpKitSigner } from "../../sdk/cdp-signer.js";
+import { Decision } from "../../sdk/attest.js";
+import { permitrPay, PermitrBlockError } from "../../sdk/permitr-pay.js";
 import { loadWallet } from "../../scripts/lib.js";
 
 const RESOURCE_URL = process.env.RESOURCE_URL ?? "http://localhost:4021/chapter";
 
-// CDP server wallet when credentials are present; local keypair fallback.
+// Payment signer: CDP server wallet when credentials are present; local
+// keypair fallback. Attestations sign as the Permitr service (main wallet).
+const attestAuthority = await loadWallet();
 const signer = process.env.CDP_API_KEY_ID
   ? cdpKitSigner(
       await new CdpClient().solana.getOrCreateAccount({
         name: "permitr-agent",
       }),
     )
-  : await loadWallet();
+  : attestAuthority;
 console.log(`Paying as ${signer.address}`);
 
-const client = new x402Client();
-registerExactSvmScheme(client, { signer });
-const fetchWithPay = wrapFetchWithPayment(fetch, client);
+try {
+  const result = await permitrPay(RESOURCE_URL, signer, attestAuthority);
 
-const res = await fetchWithPay(RESOURCE_URL);
-console.log(`HTTP ${res.status}`);
-const paymentResponse = res.headers.get("x-payment-response");
-if (paymentResponse) {
-  const decoded = JSON.parse(
-    Buffer.from(paymentResponse, "base64").toString("utf8"),
-  );
-  console.log("Settlement:", decoded);
-  if (decoded.transaction)
+  console.log("\n--- screenings ---");
+  for (const s of result.screenings) {
     console.log(
-      `explorer: https://explorer.solana.com/tx/${decoded.transaction}?cluster=devnet`,
+      `  ${s.verdict.allowed ? "✅ ALLOW" : "⛔ BLOCK"} ${s.mint.slice(0, 8)}… ` +
+        `${s.verdict.issuerName ?? "(no record)"} — ${s.verdict.status}` +
+        (s.attestation ? `\n     attested: ${s.attestation}` : ""),
     );
-}
-const body = await res.text();
-console.log("--- body ---");
-console.log(body);
+  }
+  console.log(
+    `\ndecision: ${Decision[result.decision]}  paidWith: ${result.paidWith.slice(0, 8)}…`,
+  );
+  if (result.txSignature)
+    console.log(
+      `payment:  https://explorer.solana.com/tx/${result.txSignature}?cluster=devnet`,
+    );
+  console.log(
+    `attested: https://explorer.solana.com/address/${result.paymentAttestation.attestation}?cluster=devnet`,
+  );
+  console.log("\n--- body ---");
+  console.log(await result.response.text());
 
-if (res.status !== 200) process.exit(1);
-console.log("\n✅ x402 payment settled E2E on devnet — Day-2 DoD met.");
+  if (result.response.status !== 200) process.exit(1);
+  console.log("\n✅ block → reroute → pay → attest complete — Day-3 DoD met.");
+} catch (e) {
+  if (e instanceof PermitrBlockError) {
+    console.error(`\n⛔ ${e.message}`);
+    console.error("Payment refused (fail-closed). Attested blocks:");
+    for (const s of e.screenings)
+      if (s.attestation) console.error(`  ${s.mint}: ${s.attestation}`);
+    process.exit(1);
+  }
+  throw e;
+}

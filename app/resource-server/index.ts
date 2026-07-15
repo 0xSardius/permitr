@@ -6,12 +6,25 @@
  * and the CDP facilitator as primary.
  */
 import express from "express";
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { paymentMiddleware, x402ResourceServer } from "@x402/express";
 import { HTTPFacilitatorClient, type RoutesConfig } from "@x402/core/server";
 import { ExactSvmScheme } from "@x402/svm/exact/server";
 
 export const SOLANA_DEVNET = "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1" as const;
 export const USDC_DEVNET = "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU";
+
+// The fictional non-permitted coin, self-minted at seed time. Offering it
+// FIRST makes the agent's registry screen genuinely decision-relevant.
+const SHADYUSD = readFileSync(
+  path.join(
+    path.dirname(fileURLToPath(import.meta.url)),
+    "../../data/seed/shadyusd.mint",
+  ),
+  "utf8",
+).trim();
 
 const PAY_TO =
   process.env.PAYTO_ADDRESS ?? "47mxV9vnVUkX8i5V8qDoHgauurV7w5Uc3cjH7Nk4rqBg";
@@ -28,6 +41,18 @@ const server = new x402ResourceServer(facilitator).register(
 const routes: RoutesConfig = {
   "GET /chapter": {
     accepts: [
+      // ShadyUSD listed FIRST — a naive client (default selector = first
+      // option) would pay with the non-permitted coin. Permitr's screen is
+      // what stands between the agent and that payment.
+      {
+        scheme: "exact",
+        network: SOLANA_DEVNET,
+        payTo: PAY_TO,
+        price: {
+          amount: "10000", // 0.01 ShadyUSD (6 decimals)
+          asset: SHADYUSD,
+        },
+      },
       {
         scheme: "exact",
         network: SOLANA_DEVNET,

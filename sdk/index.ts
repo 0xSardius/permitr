@@ -45,6 +45,9 @@ export type Verdict = {
   citations: VerdictCitation[];
   registryVersion: number;
   updatedAt: number | null;
+  /** Raw decoded IssuerRecord (null when Unknown) — numeric enums + citation
+   * bases for attestation emission and canonical citation hashing. */
+  raw: import("./generated/index.js").IssuerRecord | null;
 };
 
 function unknownVerdict(mint: string): Verdict {
@@ -58,6 +61,7 @@ function unknownVerdict(mint: string): Verdict {
     citations: [],
     registryVersion: 0,
     updatedAt: null,
+    raw: null,
   };
 }
 
@@ -102,6 +106,7 @@ export async function queryRegistry(
       ],
       registryVersion: r.registryVersion,
       updatedAt: Number(r.updatedAt),
+      raw: r,
     };
   } catch {
     // fail closed on ANY failure (RPC error, timeout, decode error):
