@@ -15,14 +15,28 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$ne
 ;
 ;
 ;
+// One sample per gradation — the registry doesn't say yes/no, it says HOW
+// (or why not), and each kind of decision leaves a different audit record.
 const SAMPLES = [
     {
-        address: "4Vx6rgL8uT4Fb6orbHsy2pn2NjS3GfVJAS6tLyhv2S7W",
-        label: "Blocked — ShadyUSD, no statutory pathway (§3(a))"
+        address: "8t9TGiSPjjDj4gsYkC4HqsazUDUSkSCoSZiAi4C25vfK",
+        label: "Allowed — USDC (Circle), federal qualified pathway; agent purchased a compliance verdict"
     },
     {
         address: "HwRxY1t1w3iPRnk5xoX43QiYe4P2ug8ysdzRYq35QYEy",
-        label: "Rerouted — paid with USDC after blocking ShadyUSD"
+        label: "Rerouted — non-qualified asset refused, paid with pathway-qualified USDC instead"
+    },
+    {
+        address: "4Vx6rgL8uT4Fb6orbHsy2pn2NjS3GfVJAS6tLyhv2S7W",
+        label: "Blocked — ShadyUSD, no statutory pathway (§3(a), §3(g))"
+    },
+    {
+        address: "AYrF49PjGsASvR4C4SBTHJuWrWh1BVffHDadMYhoYGJe",
+        label: "Blocked, with a path — USDG (MAS, Singapore): §18 exception identified, conditions unmet (no Treasury comparability determination)"
+    },
+    {
+        address: "D3SGdXV2VkwUF6CcDVUd6L2QB3adURvuWWzsnMgdXktg",
+        label: "Blocked, fail-closed — unregistered mint (wSOL): no registry record, unknown is never allowed"
     }
 ];
 const $$RSC_SERVER_ACTION_0 = async function lookup(formData) {
@@ -38,7 +52,7 @@ function Home() {
                 children: "Permitr Examiner View"
             }, void 0, false, {
                 fileName: "[project]/app/examiner/app/page.tsx",
-                lineNumber: 23,
+                lineNumber: 41,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$10_react$2d$dom$40$19$2e$2$2e$7_react$40$19$2e$2$2e$7_$5f$react$40$19$2e$2$2e$7$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -46,14 +60,14 @@ function Home() {
                 children: "GENIUS Act payment-screening audit records · Solana devnet"
             }, void 0, false, {
                 fileName: "[project]/app/examiner/app/page.tsx",
-                lineNumber: 24,
+                lineNumber: 42,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$10_react$2d$dom$40$19$2e$2$2e$7_react$40$19$2e$2$2e$7_$5f$react$40$19$2e$2$2e$7$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                 children: "Every payment evaluated by the Permitr Agent — allowed, blocked, or rerouted — leaves an onchain attestation pinning the verdict, the issuer pathway, the registry version, and a hash of the statutory citations it was judged under. Paste an attestation address to render it as a plain-English audit record."
             }, void 0, false, {
                 fileName: "[project]/app/examiner/app/page.tsx",
-                lineNumber: 27,
+                lineNumber: 45,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$10_react$2d$dom$40$19$2e$2$2e$7_react$40$19$2e$2$2e$7_$5f$react$40$19$2e$2$2e$7$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -66,7 +80,7 @@ function Home() {
                         required: true
                     }, void 0, false, {
                         fileName: "[project]/app/examiner/app/page.tsx",
-                        lineNumber: 35,
+                        lineNumber: 53,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$10_react$2d$dom$40$19$2e$2$2e$7_react$40$19$2e$2$2e$7_$5f$react$40$19$2e$2$2e$7$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -74,20 +88,20 @@ function Home() {
                         children: "Render"
                     }, void 0, false, {
                         fileName: "[project]/app/examiner/app/page.tsx",
-                        lineNumber: 40,
+                        lineNumber: 58,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/examiner/app/page.tsx",
-                lineNumber: 34,
+                lineNumber: 52,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$10_react$2d$dom$40$19$2e$2$2e$7_react$40$19$2e$2$2e$7_$5f$react$40$19$2e$2$2e$7$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
                 children: "Sample records"
             }, void 0, false, {
                 fileName: "[project]/app/examiner/app/page.tsx",
-                lineNumber: 42,
+                lineNumber: 60,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$2$2e$10_react$2d$dom$40$19$2e$2$2e$7_react$40$19$2e$2$2e$7_$5f$react$40$19$2e$2$2e$7$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
@@ -98,17 +112,17 @@ function Home() {
                             children: s.label
                         }, void 0, false, {
                             fileName: "[project]/app/examiner/app/page.tsx",
-                            lineNumber: 46,
+                            lineNumber: 64,
                             columnNumber: 13
                         }, this)
                     }, s.address, false, {
                         fileName: "[project]/app/examiner/app/page.tsx",
-                        lineNumber: 45,
+                        lineNumber: 63,
                         columnNumber: 11
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/app/examiner/app/page.tsx",
-                lineNumber: 43,
+                lineNumber: 61,
                 columnNumber: 7
             }, this)
         ]

@@ -1,13 +1,31 @@
 import { redirect } from "next/navigation";
 
+// One sample per gradation — the registry doesn't say yes/no, it says HOW
+// (or why not), and each kind of decision leaves a different audit record.
 const SAMPLES = [
   {
-    address: "4Vx6rgL8uT4Fb6orbHsy2pn2NjS3GfVJAS6tLyhv2S7W",
-    label: "Blocked — ShadyUSD, no statutory pathway (§3(a))",
+    address: "8t9TGiSPjjDj4gsYkC4HqsazUDUSkSCoSZiAi4C25vfK",
+    label:
+      "Allowed — USDC (Circle), federal qualified pathway; agent purchased a compliance verdict",
   },
   {
     address: "HwRxY1t1w3iPRnk5xoX43QiYe4P2ug8ysdzRYq35QYEy",
-    label: "Rerouted — paid with USDC after blocking ShadyUSD",
+    label:
+      "Rerouted — non-qualified asset refused, paid with pathway-qualified USDC instead",
+  },
+  {
+    address: "4Vx6rgL8uT4Fb6orbHsy2pn2NjS3GfVJAS6tLyhv2S7W",
+    label: "Blocked — ShadyUSD, no statutory pathway (§3(a), §3(g))",
+  },
+  {
+    address: "AYrF49PjGsASvR4C4SBTHJuWrWh1BVffHDadMYhoYGJe",
+    label:
+      "Blocked, with a path — USDG (MAS, Singapore): §18 exception identified, conditions unmet (no Treasury comparability determination)",
+  },
+  {
+    address: "D3SGdXV2VkwUF6CcDVUd6L2QB3adURvuWWzsnMgdXktg",
+    label:
+      "Blocked, fail-closed — unregistered mint (wSOL): no registry record, unknown is never allowed",
   },
 ];
 
