@@ -113,7 +113,7 @@ Rationale: the panel contains actual lawyers and regulators. Stating this before
 - Public repo, **Apache-2.0** (open source reinforces the public-infrastructure positioning and preserves bounty eligibility).
 - 3-minute demo video (script in §10) + pre-recorded fallback clip.
 - Pitch deck: problem → gap → Permitr → demo → ecosystem → roadmap → book.
-- Devnet program ID + a sample Examiner View link.
+- Devnet program ID + a sample Examiner View link — **live: https://permitr.vercel.app** (sample: [blocked-payment audit record](https://permitr.vercel.app/a/4Vx6rgL8uT4Fb6orbHsy2pn2NjS3GfVJAS6tLyhv2S7W)); auto-deploys from `main`.
 - README with quickstart, architecture, disclaimer.
 
 *Confirm exact submission mechanics/rubric with MDBA contact.*

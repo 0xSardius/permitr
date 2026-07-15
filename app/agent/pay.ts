@@ -13,6 +13,7 @@ import { permitrPay, PermitrBlockError } from "../../sdk/permitr-pay";
 import { loadWallet } from "../../scripts/lib";
 
 const RESOURCE_URL = process.env.RESOURCE_URL ?? "http://localhost:4021/chapter";
+const EXAMINER_URL = process.env.EXAMINER_URL ?? "https://permitr.vercel.app";
 
 // Payment signer: CDP server wallet when credentials are present; local
 // keypair fallback. Attestations sign as the Permitr service (main wallet).
@@ -34,7 +35,9 @@ try {
     console.log(
       `  ${s.verdict.allowed ? "✅ ALLOW" : "⛔ BLOCK"} ${s.mint.slice(0, 8)}… ` +
         `${s.verdict.issuerName ?? "(no record)"} — ${s.verdict.status}` +
-        (s.attestation ? `\n     attested: ${s.attestation}` : ""),
+        (s.attestation
+          ? `\n     audit record: ${EXAMINER_URL}/a/${s.attestation}`
+          : ""),
     );
   }
   console.log(
@@ -45,7 +48,7 @@ try {
       `payment:  https://explorer.solana.com/tx/${result.txSignature}?cluster=devnet`,
     );
   console.log(
-    `attested: https://explorer.solana.com/address/${result.paymentAttestation.attestation}?cluster=devnet`,
+    `audit record: ${EXAMINER_URL}/a/${result.paymentAttestation.attestation}`,
   );
   console.log("\n--- body ---");
   console.log(await result.response.text());
