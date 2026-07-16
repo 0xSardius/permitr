@@ -11,7 +11,12 @@ import {
   deserializeAttestationData,
   fetchMaybeAttestation,
   fetchSchema,
+  getAttestationDecoder,
 } from "sas-lib";
+import { getCountersignatures } from "../../../sdk/countersign";
+
+export { getCountersignatures };
+export type { Countersignature } from "../../../sdk/countersign";
 import {
   fetchMaybeIssuerRecord,
   findRecordPda,
@@ -185,3 +190,60 @@ export async function loadAttestation(
 }
 
 export { deriveAttestationPda };
+
+const SAS_PROGRAM = "22zoJMtdu4tQc2PzL74ZUT7FrwgB1Udec8DdW4yw4BdG";
+
+/**
+ * Supervision view: enumerate every payment attestation issued under the
+ * Permitr credential, directly from chain (memcmp on credential+schema at
+ * their fixed offsets in the SAS attestation layout — no indexer).
+ */
+export async function listPaymentAttestations(): Promise<
+  { address: string; decoded: DecodedAttestation }[]
+> {
+  const accounts = await rpc
+    .getProgramAccounts(address(SAS_PROGRAM), {
+      encoding: "base64",
+      filters: [
+        {
+          memcmp: {
+            offset: 33n, // credential (after u8 discriminator + 32B nonce)
+            bytes: PERMITR_CREDENTIAL as Parameters<
+              typeof address
+            >[0] as never,
+            encoding: "base58",
+          },
+        },
+        {
+          memcmp: {
+            offset: 65n, // schema
+            bytes: PERMITR_PAYMENT_SCHEMA as never,
+            encoding: "base58",
+          },
+        },
+      ],
+    })
+    .send();
+
+  const schema = await fetchSchema(
+    sasRpc,
+    address(PERMITR_PAYMENT_SCHEMA) as Parameters<typeof fetchSchema>[1],
+  );
+  const decoder = getAttestationDecoder();
+  const out: { address: string; decoded: DecodedAttestation }[] = [];
+  for (const acc of accounts) {
+    try {
+      const bytes = Buffer.from(acc.account.data[0], "base64");
+      const att = decoder.decode(bytes);
+      const decoded = deserializeAttestationData<DecodedAttestation>(
+        schema.data,
+        att.data as Uint8Array,
+      );
+      out.push({ address: acc.pubkey, decoded });
+    } catch {
+      // skip undecodable accounts
+    }
+  }
+  out.sort((a, b) => Number(b.decoded.timestamp - a.decoded.timestamp));
+  return out;
+}

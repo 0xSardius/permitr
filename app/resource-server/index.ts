@@ -13,6 +13,7 @@ import { paymentMiddleware, x402ResourceServer } from "@x402/express";
 import { HTTPFacilitatorClient, type RoutesConfig } from "@x402/core/server";
 import { ExactSvmScheme } from "@x402/svm/exact/server";
 import { queryRegistry } from "../../sdk/index";
+import { getCountersignatures } from "../../sdk/countersign";
 import { rpc } from "../../scripts/lib";
 
 export const SOLANA_DEVNET = "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1" as const;
@@ -119,11 +120,13 @@ app.get("/verdict", async (req, res) => {
   // fail-closed inside queryRegistry: bad mint / no record / RPC error all
   // resolve to status "Unknown", allowed=false — never a thrown 500.
   const verdict = await queryRegistry(rpc, mint);
+  const countersignatures = await getCountersignatures(mint);
   const { raw, ...report } = verdict; // raw account data stays internal
   res.json({
     ...report,
+    countersignatures,
     disclaimer:
-      "Machine-readable mirror of public law with citations. Not legal advice; classifications are illustrative as of the registry version shown.",
+      "Machine-readable mirror of public law with citations. Not legal advice; classifications are illustrative as of the registry version shown. Countersignatures marked SIMULATED are demonstrations, not government action.",
   });
 });
 

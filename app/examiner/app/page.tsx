@@ -57,6 +57,11 @@ export default function Home() {
         />
         <button type="submit">Render</button>
       </form>
+      <p>
+        <a href="/supervision">
+          → Supervision View: the full screening docket, enumerated from chain
+        </a>
+      </p>
       <h2>Sample records</h2>
       <ul className="samples">
         {SAMPLES.map((s) => (

@@ -152,6 +152,7 @@ Rationale: the panel contains actual lawyers and regulators. Stating this before
 
 ## 12. Roadmap (pitch slide)
 
+- **Government as pilot customer (federal-first; conference-validated Jul 16).** The examiner IS the user: Supervision View (screening docket enumerated from chain — no indexer, nothing to subpoena but the chain), records portability (print/PDF of audit records), and regulator countersignatures — each regulator holds its own SAS credential and countersigns records; discovery is deterministic (mint-as-nonce), zero program changes. Demo credential is labeled **SIMULATED** everywhere (facts cited are real agency actions; the signer is illustrative — we never manufacture government endorsement). State lane (§4(c) certification tracking, SCRC support) is the same mechanism with more list entries — no dilution. Scope boundary that keeps the architecture unchanged: **public law and public audit records only**; supervisory-confidential data is explicitly out of scope.
 - ~~**Permitr-as-an-x402-service**~~ — **SHIPPED (Jul 15, ahead of roadmap):** `GET /verdict?mint=…` is live, priced 0.001 USDC per query. Any agent pays a micro-fee and receives `{verdict, pathway, citations, registryVersion}`; verified E2E with the payment for the compliance data itself compliance-screened. Two-sided x402 — consumer *and* provider (Anchorage Agent-to-Agent Settlement Rails category). Next: oracle-countersigned verdicts.
 - Issuer/regulator self-attestation via SAS.
 - Integrator SDK — every Solana neobank/fintech needs this by Jan 2027.

@@ -193,3 +193,53 @@ ul.samples {
 ul.samples li {
   margin: 0.4rem 0;
 }
+
+/* ── supervision docket ── */
+table.docket {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.docket th {
+  text-align: left;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 2px solid var(--accent);
+  padding: 0.35rem 0.5rem 0.35rem 0;
+}
+.docket td {
+  border-bottom: 1px solid var(--rule);
+  padding: 0.45rem 0.5rem 0.45rem 0;
+  vertical-align: top;
+}
+.decision {
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.1rem 0.45rem;
+  border: 1px solid;
+}
+.decision.d0 { color: var(--allow); border-color: var(--allow); background: var(--allow-bg); }
+.decision.d1 { color: var(--block); border-color: var(--block); background: var(--block-bg); }
+.decision.d2 { color: var(--reroute); border-color: var(--reroute); background: var(--reroute-bg); }
+
+/* ── records portability (print / save as PDF) ── */
+.print-btn {
+  float: right;
+  font: inherit;
+  font-size: 0.8rem;
+  padding: 0.35rem 0.8rem;
+  background: none;
+  border: 1px solid var(--rule);
+  color: var(--muted);
+  cursor: pointer;
+}
+@media print {
+  body { background: white; }
+  main { margin: 0; padding: 0; border: none; box-shadow: none; max-width: none; }
+  .no-print, form.lookup { display: none !important; }
+  a { color: var(--ink); text-decoration: none; }
+  .disclaimer { padding: 1rem 0; }
+}

@@ -5,8 +5,10 @@ import {
   PATHWAY_PLAIN,
   STATUS_PLAIN,
   SUBTYPE_LABELS,
+  getCountersignatures,
   loadAttestation,
 } from "../../../lib/chain";
+import { PrintButton } from "../../components/print-button";
 import { FederalSubtype } from "../../../../../sdk/generated/index";
 
 export const revalidate = 300; // attestations are immutable; cache renders
@@ -40,6 +42,9 @@ export default async function AuditRecord({ params }: Props) {
   const { address } = await params;
   const rec = await loadAttestation(address).catch(() => null);
   if (!rec) notFound();
+  const countersignatures = await getCountersignatures(rec.decoded.mint).catch(
+    () => [],
+  );
 
   const d = rec.decoded;
   const decision = DECISION_LABELS[d.decision] ?? `Decision ${d.decision}`;
@@ -55,6 +60,7 @@ export default async function AuditRecord({ params }: Props) {
 
   return (
     <>
+      <PrintButton />
       <h1>Permitr Audit Record</h1>
       <p className="docmeta">
         Attestation <code>{rec.attestationAddress}</code>
@@ -120,6 +126,29 @@ export default async function AuditRecord({ params }: Props) {
           <p className="summary">{c.summary}</p>
         </div>
       ))}
+
+      {countersignatures.length > 0 && (
+        <>
+          <h2>Regulator actions on file</h2>
+          {countersignatures.map((c) => (
+            <div className="cite" key={c.attestation}>
+              <span className="authority">
+                {c.simulated ? "⚠ SIMULATED CREDENTIAL" : "Regulator"}
+              </span>
+              <span className="field">{c.regulator}</span>
+              <div className="reference">{c.reference}</div>
+              <p className="summary">
+                {c.summary}{" "}
+                <a
+                  href={`https://explorer.solana.com/address/${c.attestation}?cluster=devnet`}
+                >
+                  (onchain countersignature)
+                </a>
+              </p>
+            </div>
+          ))}
+        </>
+      )}
 
       <h2>Verification</h2>
       <dl>
