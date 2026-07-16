@@ -85,7 +85,11 @@ TypeScript; CDP Solana server wallet; x402 SVM "exact" scheme; USDC (SPL) on dev
 
 Mint addresses source-verified Jul 13, 2026 (see SPEC §9); re-verify on-chain before seeding. **As of Jul 13, 2026 no §5 approvals have been granted, no state regime is certified, and the Act is not yet effective — every classification is an *anticipated pathway*, cited, as of the registry version shown (§8).** Stated proactively, this is a credibility feature, not a caveat.
 
-## 7. 4-day conference build plan (Jul 13–17)
+## 7. Build plan
+
+**Status: the 4-day conference slice below was COMPLETED Jul 15 (a day early), including the Examiner View deployed to production and the two-sided x402 flip.** The road to the Oct 31 submission is now maintained in **[ROADMAP.md](ROADMAP.md)** (4 phases: hardening → feature-complete → story-complete → submission).
+
+### Original 4-day conference plan (Jul 13–17) — archived
 
 **Goal: a working E2E slice by Day 4 — not a finished product.** Real judging is November; this slice buys kickoff credibility, mentor feedback, and book marketing.
 
