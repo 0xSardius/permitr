@@ -1,7 +1,7 @@
 # Permitr — Product Requirements Document (v3.0, canonical)
 
 **Project:** Permitr — permitted-payment-stablecoin certification for the GENIUS Act era
-**Tagline:** *Permitr — permitted payment stablecoin certification for the GENIUS Act era.*
+**Tagline:** *Permitr — permitted-issuer certification for stablecoins in the GENIUS Act era.*
 **Components:** Permitr Registry (Anchor program) · Permitr Attestations (SAS) · Examiner View (web) · Permitr Agent (x402 demo consumer)
 **Chain:** Solana — **committed**. Bounty note (updated Jul 13, 2026): Chainlink Labs is a confirmed sponsor (tiers "$1k–$25k", per-sponsor terms unpublished — pull from DoraHacks #1904 in a browser / ask at kickoff); CRE **does** support Solana as of mid-2026, so the old "EVM-oriented, not pursued" rationale is stale. Discipline unchanged: no bounty retrofitting during conference week; a CRE-feeds-Permitr angle (registry update pipeline / reserve-evidence aggregation) is a possible **November** play if terms fit.
 **Event:** BLI Legal Tech Hackathon 2026 (Law · Finance · Compliance) — conference kickoff Jul 13–17 · judging Nov 5–Dec 5 · awards Dec 12
@@ -12,7 +12,7 @@
 
 ## 1. Summary & positioning
 
-Permitr is onchain compliance infrastructure for the GENIUS Act era: a canonical, citation-backed registry answering **"Is this stablecoin a permitted payment stablecoin under the GENIUS Act — and under which issuer pathway?"**, plus a Solana Attestation Service (SAS) layer that turns every agent payment into an examination-ready audit record.
+Permitr is onchain compliance infrastructure for the GENIUS Act era: a canonical, citation-backed registry answering **"Is this stablecoin issued by a permitted payment stablecoin issuer under the GENIUS Act — and under which issuer pathway?"**, plus a Solana Attestation Service (SAS) layer that turns every agent payment into an examination-ready audit record.
 
 **One-liner:** *Everyone screens the counterparty. Nobody certifies the coin. Permitr certifies the coin — on the chain where agent payments actually scale — and leaves the trail an examiner can sign off on.*
 
@@ -22,7 +22,7 @@ Permitr is onchain compliance infrastructure for the GENIUS Act era: a canonical
 
 ## 2. Why now
 
-1. **Regulatory clock.** GENIUS Act (PL 119-27) enacted Jul 18, 2025. NPRMs all live, comment periods now closed: OCC (Feb 25, 2026, 91 FR 10202 — closed May 1), Treasury state-principles (Apr 3 — closed Jun 2), FDIC (Apr 7 — closed Jun 9), FinCEN/OFAC AML/sanctions (Apr 10 — closed Jun 9); joint CIP NPRM (Jun 22 — comments open to Aug 21). **No final rules yet; the statutory deadline for finals is Jul 18, 2026 — during conference week.** Issuance prohibition (§3(a)) effective the earlier of Jan 18, 2027 or 120 days post-final-rules (§20) — if finals land on deadline, effectiveness falls ~mid-Nov 2026, **inside the judging window**. Distinct, later deadline: the §3(b)(1) ban on intermediaries offering/selling non-permitted stablecoins begins **Jul 18, 2028**. Infrastructure must precede both.
+1. **Regulatory clock.** GENIUS Act (PL 119-27) enacted Jul 18, 2025. NPRMs all live, comment periods now closed: OCC (Feb 25, 2026, 91 FR 10202 — closed May 1), Treasury state-principles (Apr 3 — closed Jun 2), FDIC (Apr 7 — closed Jun 9), FinCEN/OFAC AML/sanctions (Apr 10 — closed Jun 9); joint CIP NPRM (Jun 22 — comments open to Aug 21). **As of Oct 20, 2026: 13 GENIUS NPRMs, 1 Treasury interim final rule (procedural, state-certification review — 91 FR 61688, Sept 30, 2026), and 0 final rules from the primary Federal regulators — the Jul 18, 2026 §13(a) deadline passed without them.** No primary-regulator final issued by Sept 20, 2026, so §20 now resolves to the 18-month date: the Act — including the §3(a) issuance prohibition — takes effect **Jan 18, 2027** (Treasury: "the GENIUS Act takes effect on January 18, 2027," 91 FR 61688 n.24), weeks after judging closes. Distinct, later deadline: the §3(b)(1) ban on intermediaries offering/selling non-permitted stablecoins begins **Jul 18, 2028**. Infrastructure must precede both.
 2. **The wedge (documented gaps).** Counterparty screening is commoditized (CDP facilitator KYT/OFAC, ClearAgent, Google AP2). But (a) **no one certifies the coin's GENIUS status or issuer pathway**, and (b) industry analysis states no agent-payment protocol yet produces an audit trail an internal-audit team would sign off on without supplementation.
 3. **Institutional demand.** Anchorage Digital Ventures' RFS has dedicated categories for "Stablecoins, FinFra & The GENIUS Act Era," "Agentic Wallets & KYA," and "Agent-to-Agent Settlement Rails." Rolling applications → real post-hackathon path.
 4. **Solana is where it's real.** Native USDC as a post-GENIUS payments backbone; Visa USDC bank settlement on Solana (Dec 2025); Mastercard six-stablecoin settlement incl. Solana (Jun 2026); x402 on Solana at 35M+ tx / $10M+ volume.
@@ -83,7 +83,7 @@ TypeScript; CDP Solana server wallet; x402 SVM "exact" scheme; USDC (SPL) on dev
 | **USDG** | Paxos Digital Singapore Pte. Ltd. (MAS Major Payment Institution) | **§18 foreign-issuer exception** — *not* a permitted pathway (§2(12)); **no Treasury comparability determination exists yet** | **Blocked-with-cited-path** — the nuance beat: blocked *differently* than ShadyUSD |
 | **ShadyUSD** | fictional, unregulated | No pathway (§3(a) prohibition) | **Blocked** — headline beat |
 
-Mint addresses source-verified Jul 13, 2026 (see SPEC §9); re-verify on-chain before seeding. **As of Jul 13, 2026 no §5 approvals have been granted, no state regime is certified, and the Act is not yet effective — every classification is an *anticipated pathway*, cited, as of the registry version shown (§8).** Stated proactively, this is a credibility feature, not a caveat.
+Mint addresses source-verified Jul 13, 2026 (see SPEC §9); re-verify on-chain before seeding. **As of Oct 20, 2026 no §5 approvals have been granted, no state regime is certified, and the Act is not yet effective (effective Jan 18, 2027) — every classification is an *anticipated pathway*, cited, as of the registry version shown (§8).** Stated proactively, this is a credibility feature, not a caveat.
 
 ## 7. Build plan
 
@@ -145,7 +145,7 @@ Rationale: the panel contains actual lawyers and regulators. Stating this before
 | Doesn't CDP's facilitator do compliance? | It screens **counterparties** (KYT/OFAC), not the **coin's** GENIUS status/pathway. Different layer — we plug in beside it. |
 | Doesn't Chainlink Proof of Reserve already do this? | PoR answers "is it **backed**?" (quantitative, continuous). Permitr answers "is the issuer **permitted**, under which pathway?" (legal, cited, versioned). A fully-collateralized coin from an unlicensed issuer passes PoR and fails GENIUS — PoR can't see a charter conversion. Solvency ≠ permission. Roadmap: PoR/NAV feeds (e.g., the S&P Global USDG SmartData feed, live on Base) plug into the registry as the *evidence* layer under the §4(a)(1)(A) reserve requirement Permitr cites as *authority*. (No PoR feed is verified live on Solana as of Jul 2026.) |
 | Doesn't Chainlink ACE cover compliance? | ACE **enforces customer-supplied policies** over identity/eligibility inputs (CCID/vLEI — the *counterparty* axis); per Chainlink's own docs, rules are "defined by users, not by ACE," it publishes **no legal determinations** of GENIUS issuer status, and it is **EVM-only**. Enforcement needs authority: Permitr supplies the cited, versioned determinations an ACE-style policy would consume — on the asset axis, on Solana. Layered stack: PoR = evidence, ACE = enforcement, Permitr = authority. |
-| The Act isn't effective yet. | Effective Jan 18, 2027 at the latest — and the statutory deadline for final rules is **Jul 18, 2026**; if agencies hit it, effectiveness pulls forward to ~Nov 2026, *inside this judging window*. Rulemaking comment periods are already closed. Infrastructure precedes the deadline. |
+| The Act isn't effective yet. | It takes effect **Jan 18, 2027** — fixed now that no primary-regulator final rule issued by Sept 20, 2026. The Jul 18, 2026 final-rule deadline passed with 13 NPRMs and zero primary-regulator finals: institutions must build compliance against a moving, proposed-rule landscape, which is exactly what a versioned, cited registry is for. Infrastructure precedes the deadline. |
 | The Act regulates *issuers*, not coins. | Correct — §2(23) attaches "permitted" to the issuer; there is no defined term "permitted payment stablecoin" in the Act. The statutory formula is "payment stablecoin *issued by* a permitted payment stablecoin issuer" (§3(b)(1), §3(g), §17). That's exactly why the registry is an **IssuerRecord** keyed by mint. |
 | Isn't the foreign route a permitted pathway? | No — a foreign issuer is *definitionally* not a permitted issuer (§2(12)). §18 is an **exception** to the §3 prohibition, conditional on a Treasury comparability determination, OCC registration, and US-held reserves. Permitr models it as an exception and blocks while conditions are unmet — strict fail-closed. |
 | Is this legal advice? | No — §8. A cited, machine-readable mirror of public law. |
@@ -170,8 +170,8 @@ Rationale: the panel contains actual lawyers and regulators. Stating this before
 | Anchor/Rust eats the timeline | Minimal program; SAS-only fallback (§7) |
 | Live demo fails on stage | Pre-recorded fallback; two clean rehearsals required |
 | "Lookup table" critique | Pathway nuance + SAS attestation + Examiner View on screen |
-| Citation staleness | Versioned registry; re-sync when final rules drop |
-| Final rules drop during conference week (statutory deadline Jul 18, 2026) | Treat as a demo *opportunity*: bump registry version live; note effectiveness may pull into the judging window |
+| Citation staleness | Versioned registry; re-sync when final rules drop (`CiteSource::FinalRule`, `pnpm seed --bump`) |
+| A primary-regulator final rule drops before/during judging (OCC final reportedly expected late Oct 2026 — unverified) | Treat as a demo *opportunity*: re-cite as `FinalRule`, bump registry version live. Effective date stays Jan 18, 2027. |
 | Bounties favor EVM | Partially stale (CRE supports Solana as of mid-2026); still lean on grand prize + differentiation first — verify per-sponsor terms on DoraHacks #1904 before any bounty-driven scope change |
 | Seed mint address wrong | Verify all mints before seeding (Day 1 gate) |
 

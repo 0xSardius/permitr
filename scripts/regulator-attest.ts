@@ -44,10 +44,10 @@ const CERTS = [
   {
     mint: "CXk2AMBfi3TwaEL2468s6zP8xq9NxTXjp9gjMgzeUynM",
     issuer: "Paxos Trust Company (OCC national trust)",
-    action: "CharterConversionCompleted",
-    reference: "OCC approval — Paxos NYDFS-to-national-trust conversion (Dec 12, 2025)",
+    action: "CharterConversionConditionallyApproved",
+    reference: "OCC Cond. Approval No. 1358, Paxos Trust Co. conversion to national trust (Dec 12, 2025)",
     summary:
-      "SIMULATED countersignature citing a real agency action: Paxos completed conversion to an OCC national trust charter on Dec 12, 2025.",
+      "SIMULATED countersignature citing a real agency action: OCC conditionally approved Paxos's national trust conversion Dec 12, 2025 (CA No. 1358).",
   },
 ];
 

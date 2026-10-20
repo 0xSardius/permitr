@@ -2,7 +2,7 @@
 
 # Permitr
 
-**Permitted payment stablecoin certification for the GENIUS Act era.**
+**Permitted-issuer certification for stablecoins in the GENIUS Act era.**
 
 Everyone screens the counterparty. Nobody certifies the coin. Permitr is a citation-backed, versioned onchain registry answering: *is this stablecoin's issuer a "permitted payment stablecoin issuer" under the GENIUS Act (PL 119-27) — and under which pathway?* — wired into agent payments (x402) and rendered as examiner-ready audit records (Solana Attestation Service).
 
@@ -64,7 +64,7 @@ Paying requires devnet USDC + SOL in the payer (CDP server wallet via `.env` cre
 | Sample x402 payment (devnet USDC) | [`4mFXX946…AnP9nL`](https://explorer.solana.com/tx/4mFXX946mvkfpYznVNJyQuzcFJRY4jdZQtuGdTdPNDoYPG1YGmKovu9ECYzVJ6C7TutiU4rbJEnEjDwdRpAnP9nL?cluster=devnet) |
 | ShadyUSD (fictional test mint) | `5pq1R1sx4xLW7YYjKLKr8dCPbFzahv7ppLDXAk5uXcxC` |
 
-Seed registry records (per-mint PDAs, seeds `["issuer", mint]`): USDC devnet `4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU` (federal pathway), PYUSD devnet `CXk2AMBfi3TwaEL2468s6zP8xq9NxTXjp9gjMgzeUynM` (the v1→v2 pathway-migration record), USDG mainnet ref `2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH` (§18 exception, conditions unmet → blocked), ShadyUSD (no pathway → blocked). Citations are DRAFT pending author review.
+Seed registry records (per-mint PDAs, seeds `["issuer", mint]`): USDC devnet `4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU` (federal pathway), PYUSD devnet `CXk2AMBfi3TwaEL2468s6zP8xq9NxTXjp9gjMgzeUynM` (the v1→v2 pathway-migration record), USDG mainnet ref `2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH` (§18 exception, conditions unmet → blocked), ShadyUSD (no pathway → blocked). Citations are source-verified against primary sources (Oct 20, 2026); author review against the book pending.
 
 ## Repo layout
 
@@ -74,7 +74,7 @@ sdk/                         TS client: queryRegistry(mint) -> Verdict
 app/agent/                   x402 payment agent (CDP Solana server wallet)
 app/resource-server/         x402-gated resource endpoint
 app/examiner/                Examiner View (web)
-data/seed/                   Seed IssuerRecords + citations (DRAFT, author-reviewed)
+data/seed/                   Seed IssuerRecords + citations (source-verified; author review pending)
 scripts/                     deploy / seed / demo
 ```
 
@@ -82,7 +82,7 @@ scripts/                     deploy / seed / demo
 
 Hackathon build (BLI Legal Tech Hackathon 2026) — **Solana devnet only**. Seed registry covers four illustrative records: USDC (federal qualified), PYUSD (federal — with its Dec 2025 NYDFS→OCC pathway migration as the registry-versioning showcase), USDG (§18 foreign-issuer exception, conditions unmet — blocked with the cited path), and a fictional ShadyUSD (no pathway — blocked).
 
-As of July 2026 no §5 approvals have been granted, no state regime is certified, and the Act is not yet effective: **every classification is an anticipated pathway, cited, as of the registry version shown.**
+As of Oct 20, 2026 no §5 approvals have been granted, no state regime is certified, and the Act is not yet effective (it takes effect Jan 18, 2027): **every classification is an anticipated pathway, cited, as of the registry version shown.**
 
 ## License
 

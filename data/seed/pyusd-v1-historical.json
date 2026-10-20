@@ -1,6 +1,6 @@
 {
   "_draft": true,
-  "_review": "DRAFT — pending author review. Historical v1 classification used for the registry-versioning demo beat (accurate pre-Dec 12, 2025).",
+  "_review": "Source-verified Oct 20, 2026 against primary sources (govinfo slip law, Federal Register, OCC decisions, MAS) — see SPEC §2. Author review against the book pending. Historical v1 classification for the registry-versioning demo beat (accurate pre-Dec 12, 2025).",
   "mint": "CXk2AMBfi3TwaEL2468s6zP8xq9NxTXjp9gjMgzeUynM",
   "mintNote": "Paxos-published devnet PYUSD (Token-2022). Mainnet display ref: 2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo",
   "issuerName": "Paxos Trust Company (NYDFS trust — historical)",
@@ -18,14 +18,14 @@
     {
       "authority": "AgencyAction",
       "reference": "NYDFS limited-purpose trust charter (historical, pre-Dec 12, 2025)",
-      "summary": "Paxos issued PYUSD under NYDFS trust supervision until converting to an OCC national trust charter on Dec 12, 2025 — see registry v2 for current pathway."
+      "summary": "Paxos issued PYUSD under NYDFS trust supervision until the OCC conditionally approved its national trust conversion Dec 12, 2025 — see registry v2."
     }
   ],
   "reserveBasis": [
     {
       "authority": "Statute",
       "reference": "GENIUS Act §4(a)(1)(A), PL 119-27",
-      "summary": "Reserves must back outstanding stablecoins at least 1:1 in enumerated assets: currency, insured deposits, ≤93-day Treasuries, repos, government MMFs."
+      "summary": "Reserves must back outstanding coins at least 1:1 in enumerated assets incl. currency, deposits at IDIs, ≤93-day Treasuries, repos, government MMFs."
     }
   ],
   "redemptionBasis": [

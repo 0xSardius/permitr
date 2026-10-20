@@ -1,6 +1,6 @@
 {
   "_draft": true,
-  "_review": "DRAFT — pending author review. Fictional coin; the headline block beat.",
+  "_review": "Source-verified Oct 20, 2026 against primary sources (govinfo slip law, Federal Register, OCC decisions, MAS) — see SPEC §2. Author review against the book pending. Fictional coin; the headline block beat.",
   "mint": null,
   "mintNote": "Self-minted on devnet by scripts/seed.ts; mint address filled in at seed time.",
   "issuerName": "ShadyCo Global Ltd. (fictional, unregulated)",

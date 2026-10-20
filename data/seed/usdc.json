@@ -25,7 +25,7 @@
     {
       "authority": "Statute",
       "reference": "GENIUS Act §4(a)(1)(A), PL 119-27",
-      "summary": "Reserves must back outstanding stablecoins at least 1:1 in enumerated assets: currency, insured deposits, ≤93-day Treasuries, repos, government MMFs."
+      "summary": "Reserves must back outstanding coins at least 1:1 in enumerated assets incl. currency, deposits at IDIs, ≤93-day Treasuries, repos, government MMFs."
     }
   ],
   "redemptionBasis": [

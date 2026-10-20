@@ -1,6 +1,6 @@
 {
   "_draft": true,
-  "_review": "DRAFT — pending author review. Current (v2) classification after the Dec 2025 charter conversion.",
+  "_review": "Source-verified Oct 20, 2026 against primary sources (govinfo slip law, Federal Register, OCC decisions, MAS) — see SPEC §2. Author review against the book pending. Current (v2) classification after the Dec 2025 OCC conditional approval.",
   "mint": "CXk2AMBfi3TwaEL2468s6zP8xq9NxTXjp9gjMgzeUynM",
   "mintNote": "Paxos-published devnet PYUSD (Token-2022). Mainnet display ref: 2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo",
   "issuerName": "Paxos Trust Company (OCC national trust)",
@@ -11,21 +11,21 @@
     {
       "authority": "Statute",
       "reference": "GENIUS Act §2(23)(B), §2(11)(B), PL 119-27",
-      "summary": "Permitted issuers include Federal qualified payment stablecoin issuers; §2(11)(B) covers uninsured national banks chartered by the Comptroller."
+      "summary": "Permitted issuers include Federal qualified issuers; §2(11)(B): uninsured national bank chartered by the Comptroller and approved under §5 to issue."
     }
   ],
   "statusBasis": [
     {
       "authority": "AgencyAction",
-      "reference": "OCC approval — Paxos NYDFS-to-national-trust conversion, completed Dec 12, 2025",
-      "summary": "Paxos converted to an OCC national trust charter Dec 12, 2025, moving PYUSD to federal oversight. Registry v1 records the prior state classification."
+      "reference": "OCC Cond. Approval No. 1358, Paxos Trust Co. conversion to national trust (Dec 12, 2025)",
+      "summary": "OCC conditionally approved Paxos's conversion Dec 12, 2025; Paxos reports completing it that day. No §5 approval exists pre-effective-date."
     }
   ],
   "reserveBasis": [
     {
       "authority": "Statute",
       "reference": "GENIUS Act §4(a)(1)(A), PL 119-27",
-      "summary": "Reserves must back outstanding stablecoins at least 1:1 in enumerated assets: currency, insured deposits, ≤93-day Treasuries, repos, government MMFs."
+      "summary": "Reserves must back outstanding coins at least 1:1 in enumerated assets incl. currency, deposits at IDIs, ≤93-day Treasuries, repos, government MMFs."
     }
   ],
   "redemptionBasis": [
