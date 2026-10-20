@@ -1,24 +1,24 @@
 {
   "_draft": true,
-  "_review": "DRAFT — pending author review against the book. Sources verified Jul 13, 2026.",
+  "_review": "Source-verified Oct 20, 2026 against primary sources — see SPEC §2. Reclassified Oct 20, 2026 (author decision): OCC CA 1356 says Circle's national trust bank will not issue stablecoins; anticipated issuer is the NY trust. Author review against the book pending.",
   "mint": "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
   "mintNote": "Circle devnet USDC (transactable). Mainnet display ref: EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-  "issuerName": "Circle (Circle National Trust, N.A.)",
-  "pathway": "FederalQualified",
-  "federalSubtype": "UninsuredNationalBank",
+  "issuerName": "Circle (Circle New York Trust, anticipated issuer)",
+  "pathway": "StateQualified",
+  "federalSubtype": "NotApplicable",
   "status": "PathwayQualified",
   "pathwayBasis": [
     {
       "authority": "Statute",
-      "reference": "GENIUS Act §2(23)(B), §2(11)(B), PL 119-27",
-      "summary": "Permitted issuers include Federal qualified payment stablecoin issuers; §2(11)(B) covers uninsured national banks chartered by the Comptroller."
+      "reference": "GENIUS Act §2(23)(C), §2(31), §4(d), PL 119-27",
+      "summary": "Permitted issuers include State qualified issuers; over $10B outstanding, §4(d) requires transition to Federal oversight within 360 days or a waiver."
     }
   ],
   "statusBasis": [
     {
       "authority": "AgencyAction",
-      "reference": "OCC final approval, Circle National Trust, N.A. (Jul 10, 2026)",
-      "summary": "OCC granted final approval for Circle's national trust bank Jul 10, 2026. No §5 approval exists pre-effective-date; classification is an anticipated pathway."
+      "reference": "OCC Cond. Approval No. 1356 (Circle, Dec 12, 2025); NYDFS trust charter (Jul 31, 2026)",
+      "summary": "Per OCC CA 1356, Circle plans to move USDC issuance to its NY trust; its national trust bank will not issue. No §5 or state approval yet: anticipated."
     }
   ],
   "reserveBasis": [

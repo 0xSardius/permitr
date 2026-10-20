@@ -27,7 +27,7 @@ const CASES: {
     mint: "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
     status: "PathwayQualified",
     allowed: true,
-    pathway: "FederalQualified",
+    pathway: "StateQualified",
   },
   {
     name: "PYUSD",

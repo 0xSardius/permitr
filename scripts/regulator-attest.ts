@@ -35,11 +35,11 @@ const FIELD_NAMES = ["mint", "issuer", "action", "reference", "summary", "timest
 const CERTS = [
   {
     mint: "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
-    issuer: "Circle (Circle National Trust, N.A.)",
+    issuer: "Circle (Circle New York Trust, anticipated issuer)",
     action: "NationalTrustCharterApproved",
-    reference: "OCC final approval, Circle National Trust, N.A. (Jul 10, 2026)",
+    reference: "OCC final approval, First National Digital Currency Bank, N.A. (Circle), Jul 10, 2026",
     summary:
-      "SIMULATED countersignature citing a real agency action: OCC granted final approval for Circle's national trust bank on Jul 10, 2026.",
+      "SIMULATED countersignature citing a real agency action: OCC granted final approval for Circle's national trust bank (custody; non-issuer) Jul 10, 2026.",
   },
   {
     mint: "CXk2AMBfi3TwaEL2468s6zP8xq9NxTXjp9gjMgzeUynM",

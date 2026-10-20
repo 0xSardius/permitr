@@ -64,7 +64,7 @@ Paying requires devnet USDC + SOL in the payer (CDP server wallet via `.env` cre
 | Sample x402 payment (devnet USDC) | [`4mFXX946…AnP9nL`](https://explorer.solana.com/tx/4mFXX946mvkfpYznVNJyQuzcFJRY4jdZQtuGdTdPNDoYPG1YGmKovu9ECYzVJ6C7TutiU4rbJEnEjDwdRpAnP9nL?cluster=devnet) |
 | ShadyUSD (fictional test mint) | `5pq1R1sx4xLW7YYjKLKr8dCPbFzahv7ppLDXAk5uXcxC` |
 
-Seed registry records (per-mint PDAs, seeds `["issuer", mint]`): USDC devnet `4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU` (federal pathway), PYUSD devnet `CXk2AMBfi3TwaEL2468s6zP8xq9NxTXjp9gjMgzeUynM` (the v1→v2 pathway-migration record), USDG mainnet ref `2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH` (§18 exception, conditions unmet → blocked), ShadyUSD (no pathway → blocked). Citations are source-verified against primary sources (Oct 20, 2026); author review against the book pending.
+Seed registry records (per-mint PDAs, seeds `["issuer", mint]`): USDC devnet `4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU` (state pathway — anticipated NY trust issuer; §4(d) federal transition over $10B), PYUSD devnet `CXk2AMBfi3TwaEL2468s6zP8xq9NxTXjp9gjMgzeUynM` (the v1→v2 pathway-migration record), USDG mainnet ref `2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH` (§18 exception, conditions unmet → blocked), ShadyUSD (no pathway → blocked). Citations are source-verified against primary sources (Oct 20, 2026); author review against the book pending.
 
 ## Repo layout
 

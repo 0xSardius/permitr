@@ -216,7 +216,7 @@ The 402's `accepts` array lists **multiple assets** — `[ShadyUSD, USDC]` — s
 1. GET gated resource            -> 402 + accepts: [ShadyUSD, USDC]
 2. queryRegistry(ShadyUSD)       -> NoPathwayIdentified + citations
 3. BLOCK. Emit SAS attestation (decision=Blocked). Surface cited reason.
-4. queryRegistry(USDC)           -> PathwayQualified / FederalQualified (UninsuredNationalBank)
+4. queryRegistry(USDC)           -> PathwayQualified / StateQualified (anticipated NY trust issuer; reclassified Oct 20, 2026)
 5. Reroute to USDC (the only offered mint with allowed=true)
 6. Pay via x402 SVM "exact" scheme, CDP Solana server wallet, devnet USDC
 7. Facilitator verifies/settles -> resource unlocked (book chapter)

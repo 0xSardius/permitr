@@ -78,7 +78,7 @@ TypeScript; CDP Solana server wallet; x402 SVM "exact" scheme; USDC (SPL) on dev
 
 | Coin | Issuer | Pathway illustrated | Demo role |
 |---|---|---|---|
-| **USDC** | Circle — Circle National Trust, N.A. (**final OCC approval Jul 10, 2026**) | Federal qualified issuer (§2(23)(B), §2(11)) | Pathway-qualified — reroute target; "approved three days ago" |
+| **USDC** | Circle — anticipated issuer Circle New York Trust (NYDFS charter Jul 31, 2026). *Reclassified Oct 20, 2026:* OCC CA 1356 states Circle's national trust bank (final OCC approval Jul 10, 2026) "will not issue stablecoins." | State qualified issuer (§2(23)(C), §2(31)); §4(d) transition to Federal oversight above $10B | Pathway-qualified (anticipated) — reroute target |
 | **PYUSD** | Paxos Trust Company (**NYDFS → OCC national trust charter, Dec 12, 2025**) | Federal qualified — **the versioning beat**: registry v1 (historical state classification, §2(31)/§4(c)) → v2 (federal) | Pathway-migration story; state pathway narrated via PYUSD's history + NYDFS's Jun 9, 2026 proposed GENIUS-alignment reg |
 | **USDG** | Paxos Digital Singapore Pte. Ltd. (MAS Major Payment Institution) | **§18 foreign-issuer exception** — *not* a permitted pathway (§2(12)); **no Treasury comparability determination exists yet** | **Blocked-with-cited-path** — the nuance beat: blocked *differently* than ShadyUSD |
 | **ShadyUSD** | fictional, unregulated | No pathway (§3(a) prohibition) | **Blocked** — headline beat |
