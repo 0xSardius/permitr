@@ -39,8 +39,17 @@ const screenMint = tool({
   inputSchema: z.object({
     mint: z.string().describe("base58 SPL mint address"),
   }),
-  execute: async ({ mint }) => queryRegistry(rpc, mint),
+  execute: async ({ mint }) => {
+    // raw (decoded account, bigint fields) stays internal — same as /verdict
+    const { raw, ...verdict } = await queryRegistry(rpc, mint);
+    return verdict;
+  },
 });
+
+// Spend policy is enforced in code, not left to the model: the agent may only
+// buy from the configured resource origin, and at most once per run.
+const ALLOWED_ORIGIN = new URL(RESOURCE_URL).origin;
+let purchased = false;
 
 const buyResource = tool({
   description:
@@ -49,6 +58,15 @@ const buyResource = tool({
     url: z.string().describe("URL of the gated resource"),
   }),
   execute: async ({ url }) => {
+    let origin: string | null = null;
+    try {
+      origin = new URL(url).origin;
+    } catch {}
+    if (origin !== ALLOWED_ORIGIN)
+      return { outcome: "Refused", reason: `URL outside allowed origin ${ALLOWED_ORIGIN}` };
+    if (purchased)
+      return { outcome: "Refused", reason: "one purchase per run" };
+    purchased = true;
     try {
       const r = await permitrPay(url, signer, attestAuthority);
       return {
@@ -84,7 +102,7 @@ const buyResource = tool({
 });
 
 const { text } = await generateText({
-  model: anthropic("claude-sonnet-5"),
+  model: anthropic("claude-sonnet-5-5"),
   stopWhen: stepCountIs(6),
   tools: { screenMint, buyResource },
   system: [
