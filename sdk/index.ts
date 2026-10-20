@@ -29,7 +29,7 @@ export type VerdictStatus =
 export type VerdictCitation = {
   /** Which basis this citation supports: pathway | status | reserve | redemption */
   field: "pathway" | "status" | "reserve" | "redemption";
-  authority: string; // "Statute" | "ProposedRule" | "AgencyAction" | "ForeignRegime" | "BookSection"
+  authority: string; // "Statute" | "ProposedRule" | "AgencyAction" | "ForeignRegime" | "BookSection" | "FinalRule"
   reference: string;
   summary: string;
 };
@@ -77,6 +77,13 @@ function flattenCitations(
   }));
 }
 
+/** §2(23)'s three permitted-issuer categories — never ForeignSection18. */
+const PERMITTED_PATHWAYS: readonly Pathway[] = [
+  Pathway.IdiSubsidiary,
+  Pathway.FederalQualified,
+  Pathway.StateQualified,
+];
+
 export async function queryRegistry(
   rpc: Rpc<SolanaRpcApi>,
   mint: string,
@@ -87,11 +94,22 @@ export async function queryRegistry(
     if (!maybe.exists) return unknownVerdict(mint); // fail closed: no record => Unknown => blocked
 
     const r = maybe.data;
-    const status = Status[r.status] as VerdictStatus;
+    // Defense in depth: the program already refuses these states, but the
+    // client never extends a "yes" the record cannot fully support.
+    if (String(r.mint) !== mint) return unknownVerdict(mint);
+    const status = Status[r.status] as VerdictStatus | undefined;
+    if (!status) return unknownVerdict(mint); // undecodable status byte
+    const qualified =
+      status === "PathwayQualified" &&
+      PERMITTED_PATHWAYS.includes(r.pathway) &&
+      [r.pathwayBasis, r.statusBasis, r.reserveBasis, r.redemptionBasis].every(
+        (basis) => basis.length > 0,
+      );
+    if (status === "PathwayQualified" && !qualified) return unknownVerdict(mint);
     return {
       mint,
       status,
-      allowed: status === "PathwayQualified",
+      allowed: qualified,
       pathway: Pathway[r.pathway],
       federalSubtype:
         r.federalSubtype === FederalSubtype.NotApplicable

@@ -20,4 +20,12 @@ pub enum RegistryError {
     CitationTooLong,
     #[msg("Issuer name exceeds the maximum length")]
     IssuerNameTooLong,
+    #[msg("PathwayQualified requires all four citation bases (pathway, status, reserve, redemption) to be set first")]
+    QualifiedRequiresCitations,
+    #[msg("Registry version overflow")]
+    VersionOverflow,
+    #[msg("Citation reference and summary must be non-empty")]
+    CitationEmpty,
+    #[msg("Issuer name must be non-empty")]
+    IssuerNameEmpty,
 }

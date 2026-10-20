@@ -42,14 +42,37 @@ pub fn handle_upsert_issuer_record(
     validate(&args)?;
 
     let record = &mut ctx.accounts.record;
+    let is_new = record.mint == Pubkey::default();
+
+    // Citation bases are preserved across upserts and written via
+    // set_citation_basis. A pathway change invalidates them: the old
+    // citations argue for a different pathway, so they are cleared and must
+    // be re-cited before the record can qualify again.
+    if !is_new && record.pathway != args.pathway {
+        record.pathway_basis.clear();
+        record.status_basis.clear();
+        record.reserve_basis.clear();
+        record.redemption_basis.clear();
+    }
+
+    // No uncited "yes": a record can only be PathwayQualified once every
+    // basis carries a citation. Flow: upsert (non-qualified) -> 4x
+    // set_citation_basis -> upsert PathwayQualified.
+    if args.status == Status::PathwayQualified {
+        require!(
+            !record.pathway_basis.is_empty()
+                && !record.status_basis.is_empty()
+                && !record.reserve_basis.is_empty()
+                && !record.redemption_basis.is_empty(),
+            RegistryError::QualifiedRequiresCitations
+        );
+    }
+
     record.mint = ctx.accounts.mint.key();
     record.issuer_name = args.issuer_name;
     record.pathway = args.pathway;
     record.federal_subtype = args.federal_subtype;
     record.status = args.status;
-    // Citation bases are preserved across upserts and written via
-    // set_citation_basis; a fresh record starts with empty bases that the
-    // seed flow must fill before the record is demo-complete.
     // Pin the version the classification was authored under — this is what
     // attestations cite, making every verdict auditable against a point in time.
     record.registry_version = ctx.accounts.config.version;
@@ -104,6 +127,7 @@ fn validate(args: &IssuerRecordArgs) -> Result<()> {
         args.issuer_name.len() <= MAX_ISSUER_NAME_LEN as usize,
         RegistryError::IssuerNameTooLong
     );
+    require!(!args.issuer_name.is_empty(), RegistryError::IssuerNameEmpty);
 
     Ok(())
 }

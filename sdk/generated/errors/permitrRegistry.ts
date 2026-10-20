@@ -32,17 +32,29 @@ export const PERMITR_REGISTRY_ERROR__BOOK_SECTION_CANNOT_BE_PRIMARY = 0x1776; //
 export const PERMITR_REGISTRY_ERROR__CITATION_TOO_LONG = 0x1777; // 6007
 /** IssuerNameTooLong: Issuer name exceeds the maximum length */
 export const PERMITR_REGISTRY_ERROR__ISSUER_NAME_TOO_LONG = 0x1778; // 6008
+/** QualifiedRequiresCitations: PathwayQualified requires all four citation bases (pathway, status, reserve, redemption) to be set first */
+export const PERMITR_REGISTRY_ERROR__QUALIFIED_REQUIRES_CITATIONS = 0x1779; // 6009
+/** VersionOverflow: Registry version overflow */
+export const PERMITR_REGISTRY_ERROR__VERSION_OVERFLOW = 0x177a; // 6010
+/** CitationEmpty: Citation reference and summary must be non-empty */
+export const PERMITR_REGISTRY_ERROR__CITATION_EMPTY = 0x177b; // 6011
+/** IssuerNameEmpty: Issuer name must be non-empty */
+export const PERMITR_REGISTRY_ERROR__ISSUER_NAME_EMPTY = 0x177c; // 6012
 
 export type PermitrRegistryError =
   | typeof PERMITR_REGISTRY_ERROR__BOOK_SECTION_CANNOT_BE_PRIMARY
   | typeof PERMITR_REGISTRY_ERROR__CITATION_COUNT_INVALID
+  | typeof PERMITR_REGISTRY_ERROR__CITATION_EMPTY
   | typeof PERMITR_REGISTRY_ERROR__CITATION_TOO_LONG
   | typeof PERMITR_REGISTRY_ERROR__EXCEPTION_STATUS_REQUIRES_SECTION18
   | typeof PERMITR_REGISTRY_ERROR__FEDERAL_SUBTYPE_MISMATCH
+  | typeof PERMITR_REGISTRY_ERROR__ISSUER_NAME_EMPTY
   | typeof PERMITR_REGISTRY_ERROR__ISSUER_NAME_TOO_LONG
+  | typeof PERMITR_REGISTRY_ERROR__QUALIFIED_REQUIRES_CITATIONS
   | typeof PERMITR_REGISTRY_ERROR__STATUS_PATHWAY_MISMATCH
   | typeof PERMITR_REGISTRY_ERROR__UNAUTHORIZED
-  | typeof PERMITR_REGISTRY_ERROR__UNKNOWN_STATUS_NOT_WRITABLE;
+  | typeof PERMITR_REGISTRY_ERROR__UNKNOWN_STATUS_NOT_WRITABLE
+  | typeof PERMITR_REGISTRY_ERROR__VERSION_OVERFLOW;
 
 let permitrRegistryErrorMessages:
   Record<PermitrRegistryError, string> | undefined;
@@ -50,13 +62,17 @@ if (process.env.NODE_ENV !== "production") {
   permitrRegistryErrorMessages = {
     [PERMITR_REGISTRY_ERROR__BOOK_SECTION_CANNOT_BE_PRIMARY]: `BookSection is the analysis layer and cannot be the primary citation`,
     [PERMITR_REGISTRY_ERROR__CITATION_COUNT_INVALID]: `Each basis requires at least one citation and at most two`,
+    [PERMITR_REGISTRY_ERROR__CITATION_EMPTY]: `Citation reference and summary must be non-empty`,
     [PERMITR_REGISTRY_ERROR__CITATION_TOO_LONG]: `Citation reference or summary exceeds the maximum length`,
     [PERMITR_REGISTRY_ERROR__EXCEPTION_STATUS_REQUIRES_SECTION18]: `ExceptionConditionsUnmet applies only to the §18 foreign-issuer exception`,
     [PERMITR_REGISTRY_ERROR__FEDERAL_SUBTYPE_MISMATCH]: `FederalSubtype must be set iff pathway is FederalQualified (§2(11))`,
+    [PERMITR_REGISTRY_ERROR__ISSUER_NAME_EMPTY]: `Issuer name must be non-empty`,
     [PERMITR_REGISTRY_ERROR__ISSUER_NAME_TOO_LONG]: `Issuer name exceeds the maximum length`,
+    [PERMITR_REGISTRY_ERROR__QUALIFIED_REQUIRES_CITATIONS]: `PathwayQualified requires all four citation bases (pathway, status, reserve, redemption) to be set first`,
     [PERMITR_REGISTRY_ERROR__STATUS_PATHWAY_MISMATCH]: `PathwayQualified requires a permitted-issuer pathway under GENIUS Act §2(23); §18 is an exception, not a permitted pathway`,
     [PERMITR_REGISTRY_ERROR__UNAUTHORIZED]: `Only the registry authority can write records`,
     [PERMITR_REGISTRY_ERROR__UNKNOWN_STATUS_NOT_WRITABLE]: `Status::Unknown is client-side only and can never be written on-chain`,
+    [PERMITR_REGISTRY_ERROR__VERSION_OVERFLOW]: `Registry version overflow`,
   };
 }
 

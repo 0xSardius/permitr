@@ -130,4 +130,7 @@ pub enum CiteSource {
     ForeignRegime,
     /// Author's analysis layer — always second in a Vec, never primary.
     BookSection,
+    /// Final (or interim final) implementing rules. Appended last so existing
+    /// on-chain citations keep their discriminants.
+    FinalRule,
 }

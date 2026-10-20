@@ -9,10 +9,21 @@
  *   4. bump registry to v2 (once) and upsert PYUSD's current federal record
  *      — the pathway-migration / versioning demo beat
  *
+ * `pnpm seed --bump` bumps the registry version and re-upserts every current
+ * record (usdc, pyusd, usdg, shadyusd) under it — used when the legal
+ * landscape moves (rule finalized, charter action, citation corrections).
+ *
+ * Write order per record (the program refuses an uncited PathwayQualified):
+ *   stage (non-qualified) if needed -> 4x set_citation_basis -> final upsert
+ *
  * Citation strings come from the DRAFT seed files (source-verified anchors,
  * pending author review). This script never invents legal content.
  */
-import { generateKeyPairSigner } from "@solana/kit";
+import {
+  generateKeyPairSigner,
+  getAddressEncoder,
+  getProgramDerivedAddress,
+} from "@solana/kit";
 import { getCreateAccountInstruction } from "@solana-program/system";
 import {
   getInitializeMintInstruction,
@@ -25,8 +36,11 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadWallet, rpc, sendIxs } from "./lib";
 import {
+  fetchMaybeIssuerRecord,
   fetchMaybeRegistryConfig,
   findConfigPda,
+  findRecordPda,
+  PERMITR_REGISTRY_PROGRAM_ADDRESS,
   getBumpRegistryVersionInstructionAsync,
   getInitializeRegistryInstructionAsync,
   getSetCitationBasisInstructionAsync,
@@ -87,19 +101,46 @@ function toCitations(cs: SeedCitation[]): Citation[] {
   }));
 }
 
-async function upsert(authority: Awaited<ReturnType<typeof loadWallet>>, seed: SeedRecord, mint: string) {
-  // Two-step write: core record first, then one tx per citation basis —
-  // a full record exceeds the 1232-byte transaction limit.
-  const coreIx = await getUpsertIssuerRecordInstructionAsync({
+type Authority = Awaited<ReturnType<typeof loadWallet>>;
+
+async function core(authority: Authority, seed: SeedRecord, mint: string, status: Status) {
+  const ix = await getUpsertIssuerRecordInstructionAsync({
     authority,
     mint: address(mint),
     issuerName: seed.issuerName,
     pathway: Pathway[seed.pathway as keyof typeof Pathway],
     federalSubtype:
       FederalSubtype[seed.federalSubtype as keyof typeof FederalSubtype],
-    status: Status[seed.status as keyof typeof Status],
+    status,
   });
-  const sig = await sendIxs(authority, [coreIx]);
+  return sendIxs(authority, [ix]);
+}
+
+async function upsert(authority: Authority, seed: SeedRecord, mint: string) {
+  // Citations go one basis per tx (a full record exceeds the 1232-byte tx
+  // limit), and the program refuses PathwayQualified until all four bases are
+  // cited — so a new or re-pathwayed record is staged non-qualified first.
+  const target = Status[seed.status as keyof typeof Status];
+  const pathway = Pathway[seed.pathway as keyof typeof Pathway];
+  const [pda] = await findRecordPda({ mint: address(mint) });
+  const existing = await fetchMaybeIssuerRecord(rpc, pda);
+  const fullyCited =
+    existing.exists &&
+    existing.data.pathway === pathway &&
+    [
+      existing.data.pathwayBasis,
+      existing.data.statusBasis,
+      existing.data.reserveBasis,
+      existing.data.redemptionBasis,
+    ].every((b) => b.length > 0);
+
+  let finalDone = false;
+  if (target === Status.PathwayQualified && !fullyCited) {
+    await core(authority, seed, mint, Status.NoPathwayIdentified);
+  } else if (!existing.exists) {
+    await core(authority, seed, mint, target);
+    finalDone = true;
+  }
 
   const bases: [BasisKind, SeedCitation[]][] = [
     [BasisKind.Pathway, seed.pathwayBasis],
@@ -116,12 +157,14 @@ async function upsert(authority: Awaited<ReturnType<typeof loadWallet>>, seed: S
     });
     await sendIxs(authority, [ix]);
   }
+  // final upsert re-pins the record to the current registry version
+  const sig = finalDone ? "(created)" : await core(authority, seed, mint, target);
   console.log(
     `  upserted ${seed.issuerName} (${mint.slice(0, 8)}…) + 4 citation bases: ${sig}`,
   );
 }
 
-async function createShadyMint(authority: Awaited<ReturnType<typeof loadWallet>>): Promise<string> {
+async function createShadyMint(authority: Authority): Promise<string> {
   const cache = path.join(seedDir, "shadyusd.mint");
   if (existsSync(cache)) return readFileSync(cache, "utf8").trim();
 
@@ -154,8 +197,14 @@ console.log(`Seeding as ${authority.address}`);
 const [configPda] = await findConfigPda();
 let config = await fetchMaybeRegistryConfig(rpc, configPda);
 if (!config.exists) {
+  // only the program's upgrade authority may initialize
+  const [programData] = await getProgramDerivedAddress({
+    programAddress: address("BPFLoaderUpgradeab1e11111111111111111111111"),
+    seeds: [getAddressEncoder().encode(PERMITR_REGISTRY_PROGRAM_ADDRESS)],
+  });
   const ix = await getInitializeRegistryInstructionAsync({
     authority,
+    programData,
     version: 1,
   });
   await sendIxs(authority, [ix]);
@@ -184,6 +233,21 @@ if (config.data.version === 1) {
   const bumpIx = await getBumpRegistryVersionInstructionAsync({ authority });
   await sendIxs(authority, [bumpIx]);
   console.log("Registry bumped to v2 (Paxos charter conversion)");
+}
+
+if (process.argv.includes("--bump")) {
+  const bumpIx = await getBumpRegistryVersionInstructionAsync({ authority });
+  await sendIxs(authority, [bumpIx]);
+  const bumped = await fetchMaybeRegistryConfig(rpc, configPda);
+  console.log(
+    `Registry bumped to v${bumped.exists ? bumped.data.version : "?"} — re-upserting current records`,
+  );
+  for (const name of ["usdc.json", "usdg.json"]) {
+    const seed = loadSeed(name);
+    await upsert(authority, seed, seed.mint!);
+  }
+  const shady = loadSeed("shadyusd.json");
+  await upsert(authority, shady, await createShadyMint(authority));
 }
 
 const pyusd = loadSeed("pyusd.json");

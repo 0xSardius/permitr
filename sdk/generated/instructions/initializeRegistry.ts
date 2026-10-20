@@ -49,6 +49,9 @@ export function getInitializeRegistryDiscriminatorBytes() {
 export type InitializeRegistryInstruction<
   TProgram extends string = typeof PERMITR_REGISTRY_PROGRAM_ADDRESS,
   TAccountAuthority extends string | AccountMeta<string> = string,
+  TAccountProgram extends string | AccountMeta<string> =
+    "3cwNTm2FHSViLLm2gVp62DqS2ttLbHigXWw4XDTbo35Y",
+  TAccountProgramData extends string | AccountMeta<string> = string,
   TAccountConfig extends string | AccountMeta<string> = string,
   TAccountSystemProgram extends string | AccountMeta<string> =
     "11111111111111111111111111111111",
@@ -61,6 +64,12 @@ export type InitializeRegistryInstruction<
         ? WritableSignerAccount<TAccountAuthority> &
             AccountSignerMeta<TAccountAuthority>
         : TAccountAuthority,
+      TAccountProgram extends string
+        ? ReadonlyAccount<TAccountProgram>
+        : TAccountProgram,
+      TAccountProgramData extends string
+        ? ReadonlyAccount<TAccountProgramData>
+        : TAccountProgramData,
       TAccountConfig extends string
         ? WritableAccount<TAccountConfig>
         : TAccountConfig,
@@ -107,10 +116,14 @@ export function getInitializeRegistryInstructionDataCodec(): FixedSizeCodec<
 
 export type InitializeRegistryAsyncInput<
   TAccountAuthority extends string = string,
+  TAccountProgram extends string = string,
+  TAccountProgramData extends string = string,
   TAccountConfig extends string = string,
   TAccountSystemProgram extends string = string,
 > = {
   authority: TransactionSigner<TAccountAuthority>;
+  program?: Address<TAccountProgram>;
+  programData: Address<TAccountProgramData>;
   config?: Address<TAccountConfig>;
   systemProgram?: Address<TAccountSystemProgram>;
   version: InitializeRegistryInstructionDataArgs["version"];
@@ -118,12 +131,16 @@ export type InitializeRegistryAsyncInput<
 
 export async function getInitializeRegistryInstructionAsync<
   TAccountAuthority extends string,
+  TAccountProgram extends string,
+  TAccountProgramData extends string,
   TAccountConfig extends string,
   TAccountSystemProgram extends string,
   TProgramAddress extends Address = typeof PERMITR_REGISTRY_PROGRAM_ADDRESS,
 >(
   input: InitializeRegistryAsyncInput<
     TAccountAuthority,
+    TAccountProgram,
+    TAccountProgramData,
     TAccountConfig,
     TAccountSystemProgram
   >,
@@ -132,6 +149,8 @@ export async function getInitializeRegistryInstructionAsync<
   InitializeRegistryInstruction<
     TProgramAddress,
     TAccountAuthority,
+    TAccountProgram,
+    TAccountProgramData,
     TAccountConfig,
     TAccountSystemProgram
   >
@@ -143,6 +162,8 @@ export async function getInitializeRegistryInstructionAsync<
   // Original accounts.
   const originalAccounts = {
     authority: { value: input.authority ?? null, isWritable: true },
+    program: { value: input.program ?? null, isWritable: false },
+    programData: { value: input.programData ?? null, isWritable: false },
     config: { value: input.config ?? null, isWritable: true },
     systemProgram: { value: input.systemProgram ?? null, isWritable: false },
   };
@@ -155,6 +176,10 @@ export async function getInitializeRegistryInstructionAsync<
   const args = { ...input };
 
   // Resolve default values.
+  if (!accounts.program.value) {
+    accounts.program.value =
+      "3cwNTm2FHSViLLm2gVp62DqS2ttLbHigXWw4XDTbo35Y" as Address<"3cwNTm2FHSViLLm2gVp62DqS2ttLbHigXWw4XDTbo35Y">;
+  }
   if (!accounts.config.value) {
     accounts.config.value = await findConfigPda();
   }
@@ -167,6 +192,8 @@ export async function getInitializeRegistryInstructionAsync<
   return Object.freeze({
     accounts: [
       getAccountMeta(accounts.authority),
+      getAccountMeta(accounts.program),
+      getAccountMeta(accounts.programData),
       getAccountMeta(accounts.config),
       getAccountMeta(accounts.systemProgram),
     ],
@@ -177,6 +204,8 @@ export async function getInitializeRegistryInstructionAsync<
   } as InitializeRegistryInstruction<
     TProgramAddress,
     TAccountAuthority,
+    TAccountProgram,
+    TAccountProgramData,
     TAccountConfig,
     TAccountSystemProgram
   >);
@@ -184,10 +213,14 @@ export async function getInitializeRegistryInstructionAsync<
 
 export type InitializeRegistryInput<
   TAccountAuthority extends string = string,
+  TAccountProgram extends string = string,
+  TAccountProgramData extends string = string,
   TAccountConfig extends string = string,
   TAccountSystemProgram extends string = string,
 > = {
   authority: TransactionSigner<TAccountAuthority>;
+  program?: Address<TAccountProgram>;
+  programData: Address<TAccountProgramData>;
   config: Address<TAccountConfig>;
   systemProgram?: Address<TAccountSystemProgram>;
   version: InitializeRegistryInstructionDataArgs["version"];
@@ -195,12 +228,16 @@ export type InitializeRegistryInput<
 
 export function getInitializeRegistryInstruction<
   TAccountAuthority extends string,
+  TAccountProgram extends string,
+  TAccountProgramData extends string,
   TAccountConfig extends string,
   TAccountSystemProgram extends string,
   TProgramAddress extends Address = typeof PERMITR_REGISTRY_PROGRAM_ADDRESS,
 >(
   input: InitializeRegistryInput<
     TAccountAuthority,
+    TAccountProgram,
+    TAccountProgramData,
     TAccountConfig,
     TAccountSystemProgram
   >,
@@ -208,6 +245,8 @@ export function getInitializeRegistryInstruction<
 ): InitializeRegistryInstruction<
   TProgramAddress,
   TAccountAuthority,
+  TAccountProgram,
+  TAccountProgramData,
   TAccountConfig,
   TAccountSystemProgram
 > {
@@ -218,6 +257,8 @@ export function getInitializeRegistryInstruction<
   // Original accounts.
   const originalAccounts = {
     authority: { value: input.authority ?? null, isWritable: true },
+    program: { value: input.program ?? null, isWritable: false },
+    programData: { value: input.programData ?? null, isWritable: false },
     config: { value: input.config ?? null, isWritable: true },
     systemProgram: { value: input.systemProgram ?? null, isWritable: false },
   };
@@ -230,6 +271,10 @@ export function getInitializeRegistryInstruction<
   const args = { ...input };
 
   // Resolve default values.
+  if (!accounts.program.value) {
+    accounts.program.value =
+      "3cwNTm2FHSViLLm2gVp62DqS2ttLbHigXWw4XDTbo35Y" as Address<"3cwNTm2FHSViLLm2gVp62DqS2ttLbHigXWw4XDTbo35Y">;
+  }
   if (!accounts.systemProgram.value) {
     accounts.systemProgram.value =
       "11111111111111111111111111111111" as Address<"11111111111111111111111111111111">;
@@ -239,6 +284,8 @@ export function getInitializeRegistryInstruction<
   return Object.freeze({
     accounts: [
       getAccountMeta(accounts.authority),
+      getAccountMeta(accounts.program),
+      getAccountMeta(accounts.programData),
       getAccountMeta(accounts.config),
       getAccountMeta(accounts.systemProgram),
     ],
@@ -249,6 +296,8 @@ export function getInitializeRegistryInstruction<
   } as InitializeRegistryInstruction<
     TProgramAddress,
     TAccountAuthority,
+    TAccountProgram,
+    TAccountProgramData,
     TAccountConfig,
     TAccountSystemProgram
   >);
@@ -261,8 +310,10 @@ export type ParsedInitializeRegistryInstruction<
   programAddress: Address<TProgram>;
   accounts: {
     authority: TAccountMetas[0];
-    config: TAccountMetas[1];
-    systemProgram: TAccountMetas[2];
+    program: TAccountMetas[1];
+    programData: TAccountMetas[2];
+    config: TAccountMetas[3];
+    systemProgram: TAccountMetas[4];
   };
   data: InitializeRegistryInstructionData;
 };
@@ -275,7 +326,7 @@ export function parseInitializeRegistryInstruction<
     InstructionWithAccounts<TAccountMetas> &
     InstructionWithData<ReadonlyUint8Array>,
 ): ParsedInitializeRegistryInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 3) {
+  if (instruction.accounts.length < 5) {
     // TODO: Coded error.
     throw new Error("Not enough accounts");
   }
@@ -289,6 +340,8 @@ export function parseInitializeRegistryInstruction<
     programAddress: instruction.programAddress,
     accounts: {
       authority: getNextAccount(),
+      program: getNextAccount(),
+      programData: getNextAccount(),
       config: getNextAccount(),
       systemProgram: getNextAccount(),
     },

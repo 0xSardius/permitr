@@ -16,7 +16,10 @@ pub struct BumpRegistryVersion<'info> {
 
 pub fn handle_bump_registry_version(ctx: Context<BumpRegistryVersion>) -> Result<()> {
     let config = &mut ctx.accounts.config;
-    config.version = config.version.checked_add(1).unwrap();
+    config.version = config
+        .version
+        .checked_add(1)
+        .ok_or(RegistryError::VersionOverflow)?;
     config.updated_at = Clock::get()?.unix_timestamp;
 
     msg!("Registry version bumped to {}", config.version);

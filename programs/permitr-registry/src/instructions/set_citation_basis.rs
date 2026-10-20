@@ -38,6 +38,10 @@ pub fn handle_set_citation_basis(
     );
     for cite in &citations {
         require!(
+            !cite.reference.is_empty() && !cite.summary.is_empty(),
+            RegistryError::CitationEmpty
+        );
+        require!(
             cite.reference.len() <= MAX_CITE_REFERENCE_LEN as usize
                 && cite.summary.len() <= MAX_CITE_SUMMARY_LEN as usize,
             RegistryError::CitationTooLong
@@ -51,6 +55,9 @@ pub fn handle_set_citation_basis(
         BasisKind::Reserve => record.reserve_basis = citations,
         BasisKind::Redemption => record.redemption_basis = citations,
     }
+    // Citations are part of the classification: re-pin the version they were
+    // authored under, so an attestation's version always matches its hash.
+    record.registry_version = ctx.accounts.config.version;
     record.updated_at = Clock::get()?.unix_timestamp;
 
     msg!("Citations set for {:?} basis on mint {}", kind as u8, record.mint);

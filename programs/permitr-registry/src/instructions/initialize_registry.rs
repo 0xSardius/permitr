@@ -1,11 +1,20 @@
 use anchor_lang::prelude::*;
 
-use crate::{constants::*, state::RegistryConfig};
+use crate::{constants::*, error::RegistryError, program::PermitrRegistry, state::RegistryConfig};
 
+/// Only the program's upgrade authority can initialize the registry, so a
+/// fresh deployment cannot be front-run into someone else's authority.
 #[derive(Accounts)]
 pub struct InitializeRegistry<'info> {
     #[account(mut)]
     pub authority: Signer<'info>,
+    #[account(constraint = program.programdata_address()? == Some(program_data.key()))]
+    pub program: Program<'info, PermitrRegistry>,
+    #[account(
+        constraint = program_data.upgrade_authority_address == Some(authority.key())
+            @ RegistryError::Unauthorized
+    )]
+    pub program_data: Account<'info, ProgramData>,
     #[account(
         init,
         payer = authority,

@@ -21,6 +21,7 @@ export enum CiteSource {
   AgencyAction,
   ForeignRegime,
   BookSection,
+  FinalRule,
 }
 
 export type CiteSourceArgs = CiteSource;
