@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import {
-  DECISION_LABELS,
   STATUS_PLAIN,
+  classifyDecision,
   listPaymentAttestations,
 } from "../../lib/chain";
 
@@ -21,12 +21,26 @@ function fmt(ts: bigint): string {
 }
 
 export default async function Supervision() {
-  const records = await listPaymentAttestations();
-  const counts = { total: records.length, blocked: 0, rerouted: 0, allowed: 0 };
+  const records = await listPaymentAttestations().catch(() => null);
+  if (!records)
+    return (
+      <>
+        <h1>Permitr Supervision View</h1>
+        <div className="banner anomaly">
+          Docket temporarily unavailable: the Solana devnet RPC did not return
+          the attestation set. No decisions are shown rather than a partial or
+          stale docket. Individual audit records remain verifiable at their
+          own addresses.
+        </div>
+      </>
+    );
+  const counts = { total: records.length, blocked: 0, rerouted: 0, allowed: 0, anomalous: 0 };
   for (const r of records) {
-    if (r.decoded.decision === 1) counts.blocked++;
-    else if (r.decoded.decision === 2) counts.rerouted++;
-    else counts.allowed++;
+    const { banner } = classifyDecision(r.decoded.decision, r.decoded.status);
+    if (banner === "blocked") counts.blocked++;
+    else if (banner === "rerouted") counts.rerouted++;
+    else if (banner === "allowed") counts.allowed++;
+    else counts.anomalous++;
   }
 
   return (
@@ -38,11 +52,12 @@ export default async function Supervision() {
       </p>
       <p>
         Every payment evaluated on the Permitr trail, discovered onchain from
-        the Permitr credential — no database, no indexer, nothing to subpoena
-        but the chain itself. As of this render:{" "}
-        <strong>{counts.total} decisions</strong> — {counts.allowed} allowed,{" "}
-        {counts.rerouted} rerouted, {counts.blocked} blocked. Each entry links
-        to its full audit record.
+        the Permitr credential — no Permitr-operated database or indexer; any
+        party can re-derive this docket from public chain data. As of this
+        render: <strong>{counts.total} decisions</strong> — {counts.allowed}{" "}
+        allowed, {counts.rerouted} rerouted, {counts.blocked} blocked
+        {counts.anomalous > 0 && `, ${counts.anomalous} anomalous`}. Each entry
+        links to its full audit record.
       </p>
 
       <h2>Docket</h2>
@@ -58,12 +73,16 @@ export default async function Supervision() {
           </tr>
         </thead>
         <tbody>
-          {records.map((r) => (
+          {records.map((r) => {
+            const v = classifyDecision(r.decoded.decision, r.decoded.status);
+            return (
             <tr key={r.address}>
               <td className="mono">{fmt(r.decoded.timestamp)}</td>
               <td>
-                <span className={`decision d${r.decoded.decision}`}>
-                  {DECISION_LABELS[r.decoded.decision] ?? r.decoded.decision}
+                <span
+                  className={`decision ${v.anomaly ? "anomaly" : `d${r.decoded.decision}`}`}
+                >
+                  {v.label}
                 </span>
               </td>
               <td className="mono">{r.decoded.mint.slice(0, 8)}…</td>
@@ -73,7 +92,8 @@ export default async function Supervision() {
                 <a href={`/a/${r.address}`}>view</a>
               </td>
             </tr>
-          ))}
+            );
+          })}
         </tbody>
       </table>
       <p style={{ color: "var(--muted)", fontSize: "0.85rem" }}>

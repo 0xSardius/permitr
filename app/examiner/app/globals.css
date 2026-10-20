@@ -11,6 +11,8 @@
   --reroute: #8a5a00;
   --reroute-bg: #f8f1e2;
   --accent: #24344d;
+  --anomaly: #3d3d46;
+  --anomaly-bg: #eeeef0;
 }
 
 * {
@@ -83,6 +85,11 @@ h2 {
   color: var(--block);
   background: var(--block-bg);
   border-color: var(--block);
+}
+.banner.anomaly {
+  color: var(--anomaly);
+  background: var(--anomaly-bg);
+  border-color: var(--anomaly);
 }
 .banner.rerouted {
   color: var(--reroute);
@@ -224,6 +231,7 @@ table.docket {
 .decision.d0 { color: var(--allow); border-color: var(--allow); background: var(--allow-bg); }
 .decision.d1 { color: var(--block); border-color: var(--block); background: var(--block-bg); }
 .decision.d2 { color: var(--reroute); border-color: var(--reroute); background: var(--reroute-bg); }
+.decision.anomaly { color: var(--anomaly); border-color: var(--anomaly); background: var(--anomaly-bg); }
 
 /* ── records portability (print / save as PDF) ── */
 .print-btn {

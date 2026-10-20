@@ -1,15 +1,18 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
-  DECISION_LABELS,
   PATHWAY_PLAIN,
   STATUS_PLAIN,
   SUBTYPE_LABELS,
+  classifyDecision,
+  PERMITR_CREDENTIAL,
+  PERMITR_PAYMENT_SCHEMA,
   getCountersignatures,
   loadAttestation,
+  type ForeignAttestation,
 } from "../../../lib/chain";
 import { PrintButton } from "../../components/print-button";
-import { FederalSubtype } from "../../../../../sdk/generated/index";
+import { Pathway } from "../../../../../sdk/generated/index";
 
 export const revalidate = 300; // attestations are immutable; cache renders
 
@@ -24,14 +27,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
     const rec = await loadAttestation(address);
     if (!rec) return { title: "Attestation not found — Permitr" };
-    const decision = DECISION_LABELS[rec.decoded.decision] ?? "Evaluated";
+    if (rec.kind === "foreign")
+      return {
+        title: "Not a Permitr audit record",
+        description:
+          "This attestation was not issued under the Permitr credential and is not rendered as a Permitr record.",
+      };
+    const { label, anomaly } = classifyDecision(rec.decoded.decision, rec.decoded.status);
     const issuer = rec.record?.issuerName ?? rec.decoded.mint.slice(0, 8) + "…";
-    const cite = rec.citations.find((c) => c.field === "status")?.reference;
+    // only quote a citation when it is provably the one pinned at decision
+    const cite = rec.hashVerified
+      ? rec.citations.find((c) => c.field === "status")?.reference
+      : undefined;
     return {
-      title: `Permitr Audit Record — ${decision}: ${issuer}`,
-      description: cite
-        ? `${decision} under ${cite}. Registry v${rec.decoded.registry_version}, independently verifiable onchain.`
-        : `Payment ${decision.toLowerCase()} by Permitr GENIUS Act screening.`,
+      title: `Permitr Audit Record — ${label}: ${issuer}`,
+      description: anomaly
+        ? "Anomalous Permitr record — not a payment approval."
+        : cite
+          ? `${label} under ${cite}. Registry v${rec.decoded.registry_version}, independently verifiable onchain.`
+          : `Payment ${label.toLowerCase()} by Permitr GENIUS Act screening. Registry v${rec.decoded.registry_version}.`,
     };
   } catch {
     return { title: "Permitr Audit Record" };
@@ -42,20 +56,23 @@ export default async function AuditRecord({ params }: Props) {
   const { address } = await params;
   const rec = await loadAttestation(address).catch(() => null);
   if (!rec) notFound();
+  if (rec.kind === "foreign") return <ForeignRecord rec={rec} />;
   const countersignatures = await getCountersignatures(rec.decoded.mint).catch(
     () => [],
   );
 
   const d = rec.decoded;
-  const decision = DECISION_LABELS[d.decision] ?? `Decision ${d.decision}`;
-  const bannerClass =
-    d.decision === 1 ? "blocked" : d.decision === 2 ? "rerouted" : "allowed";
+  const verdict = classifyDecision(d.decision, d.status);
   const status = STATUS_PLAIN[d.status];
   const pathway = PATHWAY_PLAIN[d.pathway];
+  // the subtype comes from the current record, so only show it when the
+  // record still agrees with the pathway this attestation pinned
   const subtype =
-    rec.record && rec.record.federalSubtype !== FederalSubtype.NotApplicable
-      ? SUBTYPE_LABELS[rec.record.federalSubtype]
+    d.pathway === Pathway.FederalQualified &&
+    rec.record?.pathway === Pathway.FederalQualified
+      ? (SUBTYPE_LABELS[rec.record.federalSubtype] ?? null)
       : null;
+  const pinnedCitations = rec.hashVerified === true;
   const isTx = d.payment_ref.length > 60; // tx sigs vs screen ids
 
   return (
@@ -64,11 +81,7 @@ export default async function AuditRecord({ params }: Props) {
       <h1>Permitr Audit Record</h1>
       <p className="docmeta">
         Attestation <code>{rec.attestationAddress}</code>
-        {" · "}
-        {rec.issuedByPermitr
-          ? "issued under the Permitr credential"
-          : "⚠ NOT issued under the Permitr credential"}
-        {" · "}
+        {" · issued under the Permitr credential · "}
         <a
           href={`https://explorer.solana.com/address/${rec.attestationAddress}?cluster=devnet`}
         >
@@ -76,9 +89,20 @@ export default async function AuditRecord({ params }: Props) {
         </a>
       </p>
 
-      <div className={`banner ${bannerClass}`}>
-        Payment {decision.toUpperCase()}
-        {d.decision === 2 && " — non-qualified asset refused, paid with a qualified asset"}
+      <div className={`banner ${verdict.banner}`}>
+        {verdict.anomaly ? (
+          <>
+            ANOMALOUS RECORD — decision code {d.decision} with screening status{" "}
+            {status?.label ?? d.status}. This record does not evidence an
+            allowed payment.
+          </>
+        ) : (
+          <>
+            Payment {verdict.label.toUpperCase()}
+            {d.decision === 2 &&
+              " — non-qualified asset refused, paid with a qualified asset"}
+          </>
+        )}
       </div>
 
       <h2>Asset &amp; issuer</h2>
@@ -110,7 +134,21 @@ export default async function AuditRecord({ params }: Props) {
         </dd>
       </dl>
 
-      <h2>Statutory citations (registry v{d.registry_version})</h2>
+      <h2>
+        {pinnedCitations || !rec.record
+          ? `Statutory citations (registry v${d.registry_version})`
+          : `Current registry citations (v${rec.record.registryVersion})`}
+      </h2>
+      {rec.record && !pinnedCitations && (
+        <p className="verify fail">
+          These are the citations on the registry record as it stands today
+          {rec.versionMatches === false
+            ? ` (v${rec.record.registryVersion}; this decision pinned v${d.registry_version})`
+            : ""}
+          . They could not be verified as the citation set relied on at
+          decision time — see Verification below.
+        </p>
+      )}
       {rec.citations.length === 0 && (
         <p>
           No registry record exists for this asset. Under Permitr&rsquo;s
@@ -156,8 +194,8 @@ export default async function AuditRecord({ params }: Props) {
         <dd>{fmt(d.timestamp)}</dd>
         <dt>Registry version</dt>
         <dd>
-          v{d.registry_version} — pinned at decision time; later registry
-          changes cannot alter this record
+          v{d.registry_version} — pinned in this attestation at decision time
+          (the attestation itself is immutable)
         </dd>
         <dt>Payment reference</dt>
         <dd>
@@ -186,7 +224,49 @@ export default async function AuditRecord({ params }: Props) {
           ? "Citation hash cannot be recomputed: no registry record exists for this asset (consistent with a fail-closed block)."
           : rec.hashVerified
             ? "✓ Independently verified: the citation hash recomputed from the current onchain registry record matches the hash pinned in this attestation."
-            : "✗ The current registry record's citations differ from those pinned here — the registry has been amended since this decision. The attestation remains an accurate record of what was cited at decision time."}
+            : `✗ Hash mismatch: the citation hash recomputed from the current registry record (v${rec.record?.registryVersion}) does not match the hash pinned in this attestation (v${d.registry_version}). The citations shown above are the current record's and are not verified as those relied on at decision time.`}
+      </p>
+    </>
+  );
+}
+
+function ForeignRecord({ rec }: { rec: ForeignAttestation }) {
+  return (
+    <>
+      <h1>Not a Permitr audit record</h1>
+      <div className="banner anomaly">
+        This attestation exists onchain but was not issued under the Permitr
+        credential and payment schema. It is not decoded or presented as a
+        Permitr decision, and it is not evidence of any Permitr screening.
+      </div>
+      <dl>
+        <dt>Attestation</dt>
+        <dd>
+          <code>{rec.attestationAddress}</code>
+        </dd>
+        <dt>Credential</dt>
+        <dd>
+          <code>{rec.credential}</code>
+          <br />
+          <span style={{ color: "var(--muted)" }}>
+            expected <code>{PERMITR_CREDENTIAL}</code>
+          </span>
+        </dd>
+        <dt>Schema</dt>
+        <dd>
+          <code>{rec.schema}</code>
+          <br />
+          <span style={{ color: "var(--muted)" }}>
+            expected <code>{PERMITR_PAYMENT_SCHEMA}</code>
+          </span>
+        </dd>
+      </dl>
+      <p>
+        <a
+          href={`https://explorer.solana.com/address/${rec.attestationAddress}?cluster=devnet`}
+        >
+          View raw onchain
+        </a>
       </p>
     </>
   );

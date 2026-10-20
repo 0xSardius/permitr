@@ -51,6 +51,21 @@ export type DecodedAttestation = {
 
 export const DECISION_LABELS = ["Allowed", "Blocked", "Rerouted"] as const;
 
+/** Fail-closed presentation: only decision 0 (Allowed) or 2 (Rerouted) with a
+ * PathwayQualified status reads as a payment that went through. Anything else
+ * the renderer does not recognise is shown as an anomaly — never as allowed. */
+export function classifyDecision(decision: number, status: number) {
+  if (decision === 1) return { banner: "blocked", label: "Blocked", anomaly: false };
+  const paid = decision === 0 || decision === 2;
+  if (paid && status === Status.PathwayQualified)
+    return {
+      banner: decision === 0 ? "allowed" : "rerouted",
+      label: DECISION_LABELS[decision],
+      anomaly: false,
+    };
+  return { banner: "anomaly", label: "Anomalous record", anomaly: true };
+}
+
 export const STATUS_PLAIN: Record<number, { label: string; plain: string }> = {
   [Status.PathwayQualified]: {
     label: "Pathway Qualified",
@@ -105,10 +120,20 @@ export const SUBTYPE_LABELS: Record<number, string> = {
   [FederalSubtype.FederalBranch]: "Federal branch (§2(11)(C))",
 };
 
+/** An attestation that exists onchain but was NOT issued under the Permitr
+ * credential + payment schema. It is never decoded or rendered as a Permitr
+ * record — a lookalike schema could otherwise impersonate a verdict. */
+export type ForeignAttestation = {
+  kind: "foreign";
+  attestationAddress: string;
+  credential: string;
+  schema: string;
+};
+
 export type ExaminerRecord = {
+  kind: "permitr";
   attestationAddress: string;
   decoded: DecodedAttestation;
-  issuedByPermitr: boolean;
   record: IssuerRecord | null;
   citations: {
     field: string;
@@ -117,11 +142,15 @@ export type ExaminerRecord = {
     summary: string;
   }[];
   hashVerified: boolean | null; // null when no record exists to verify against
+  /** True when the current registry record carries the same registry version
+   * the attestation pinned. The citations shown come from the CURRENT record;
+   * only when the hash verifies are they provably the set cited at decision. */
+  versionMatches: boolean | null;
 };
 
 export async function loadAttestation(
   attestationAddress: string,
-): Promise<ExaminerRecord | null> {
+): Promise<ExaminerRecord | ForeignAttestation | null> {
   const maybe = await fetchMaybeAttestation(
     sasRpc,
     address(attestationAddress) as Parameters<
@@ -134,10 +163,20 @@ export async function loadAttestation(
   const issuedByPermitr =
     String(att.credential) === PERMITR_CREDENTIAL &&
     String(att.schema) === PERMITR_PAYMENT_SCHEMA;
+  if (!issuedByPermitr) {
+    return {
+      kind: "foreign",
+      attestationAddress,
+      credential: String(att.credential),
+      schema: String(att.schema),
+    };
+  }
 
+  // decode ONLY against the pinned Permitr schema, never the one the
+  // attestation points to
   const schema = await fetchSchema(
     sasRpc,
-    att.schema as Parameters<typeof fetchSchema>[1],
+    address(PERMITR_PAYMENT_SCHEMA) as Parameters<typeof fetchSchema>[1],
   );
   const decoded = deserializeAttestationData<DecodedAttestation>(
     schema.data,
@@ -179,13 +218,18 @@ export async function loadAttestation(
       )
     : null;
 
+  const versionMatches = record
+    ? record.registryVersion === decoded.registry_version
+    : null;
+
   return {
+    kind: "permitr",
     attestationAddress,
     decoded,
-    issuedByPermitr,
     record,
     citations,
     hashVerified,
+    versionMatches,
   };
 }
 
