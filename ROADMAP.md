@@ -9,23 +9,23 @@ Triage from the Oct 18 full review (program, SDK/agent, examiner/docs, live heal
 Phases 1–4 are kept for history; anything not listed here is cut or post-hackathon.
 
 ### Must-fix (submission blockers)
-- [ ] 🤖 **Examiner: refuse forged records** — attestations not issued under the Permitr credential+schema render a refusal page with generic OG metadata (today they get the full verdict banner + citations).
-- [ ] 🤖 **Examiner: fail-closed styling** — green/"allowed" only when `decision === 0`; unknown decisions neutral and counted separately on /supervision; flag Allowed/Rerouted with `status !== PathwayQualified`.
-- [ ] 🤖 **Examiner: version honesty** — when `record.registryVersion !== attestation.registry_version` or the hash mismatches, label citations "current registry record (vN), not the set pinned at decision"; subtype only when the attestation's pathway is FederalQualified; mismatch copy states facts, not "registry amended".
-- [ ] 🤖 **Program: no uncited qualification** — `PathwayQualified` requires all four citation bases non-empty; pathway change clears bases; seed order becomes upsert(non-qualified) → 4× citations → promote. SDK also refuses empty bases / `r.mint !== mint` / non-permitted pathway.
-- [ ] 🤖 **Program: `set_citation_basis` re-pins `registry_version`** to `config.version`.
-- [ ] 🤖 **Program: lock `initialize_registry`** to the program upgrade authority; `checked_add` → typed error; reject empty citation strings.
-- [ ] 🤖 **Program upgrade deploy + reseed** on devnet; `pnpm verify-registry` green.
-- [ ] 🤖 **SDK: devnet-only signing** — `registerExactSvmScheme(..., { networks: [devnet] })`; drop non-devnet `accepts`; selector requires exact match with the screened requirement (scheme/network/asset/amount/payTo); `maxAmount` cap.
-- [ ] 🤖 **Agent demo fixes** — model id `claude-sonnet-5` → `claude-sonnet-5-5`; strip `raw` (bigint) from `screenMint` result; host allowlist + one purchase per run.
+- [x] 🤖 **Examiner: refuse forged records** — attestations not issued under the Permitr credential+schema render a refusal page with generic OG metadata (today they get the full verdict banner + citations).
+- [x] 🤖 **Examiner: fail-closed styling** — green/"allowed" only when `decision === 0`; unknown decisions neutral and counted separately on /supervision; flag Allowed/Rerouted with `status !== PathwayQualified`.
+- [x] 🤖 **Examiner: version honesty** — when `record.registryVersion !== attestation.registry_version` or the hash mismatches, label citations "current registry record (vN), not the set pinned at decision"; subtype only when the attestation's pathway is FederalQualified; mismatch copy states facts, not "registry amended".
+- [x] 🤖 **Program: no uncited qualification** — `PathwayQualified` requires all four citation bases non-empty; pathway change clears bases; seed order becomes upsert(non-qualified) → 4× citations → promote. SDK also refuses empty bases / `r.mint !== mint` / non-permitted pathway.
+- [x] 🤖 **Program: `set_citation_basis` re-pins `registry_version`** to `config.version`.
+- [x] 🤖 **Program: lock `initialize_registry`** to the program upgrade authority; `checked_add` → typed error; reject empty citation strings.
+- [ ] 🤖 **Program upgrade deploy + reseed** on devnet; `pnpm verify-registry` green. *(Upgrade deployed Oct 20, slot 513311065; reseed `pnpm seed --bump` → v3 pending USDC decision.)*
+- [x] 🤖 **SDK: devnet-only signing** — `registerExactSvmScheme(..., { networks: [devnet] })`; drop non-devnet `accepts`; selector requires exact match with the screened requirement (scheme/network/asset/amount/payTo); `maxAmount` cap.
+- [x] 🤖 **Agent demo fixes** — model id `claude-sonnet-5` → `claude-sonnet-5-5`; strip `raw` (bigint) from `screenMint` result; host allowlist + one purchase per run.
 - [ ] 🧑 **Top up CDP agent wallet SOL** (0.00125 SOL as of Oct 18).
-- [ ] 🧑 **Back up program keypair** (`target/deploy/permitr_registry-keypair.json` — only copy).
-- [ ] 🧑 **Citation review** — all 5 seed files still `_draft`. Resolve strings outside SPEC §2's verified set: USDG ANPRM cited as "FR Doc. 2025-18226" vs SPEC "90 FR 46592"; §18(a)(3); MAS framework; "≤93-day Treasuries" / "7 days' notice" details. Then drop `_draft`, fix README's contradictory "DRAFT"/"author-reviewed", reseed.
-- [ ] 🤝 **GENIUS status re-verification** — what happened at the Jul 18 final-rules deadline; re-verify "8 NPRMs, zero finals", "no §5 approvals", "pre-effective-date" copy (PRD/README/seed). If the law moved → registry version bump (demo beat).
+- [ ] 🧑 **Back up program keypair** — local copy at `~/.config/solana/backups/` done Oct 20; off-machine copy pending.
+- [ ] 🧑 **Citation review** — *Oct 20: primary-source re-verification done and applied (SPEC §2). Open: USDC pathway decision (OCC CA 1356: Circle's national trust bank "will not issue stablecoins"); author book review; re-issue on-chain countersignatures with corrected text.* Original note: all 5 seed files still `_draft`. Resolve strings outside SPEC §2's verified set: USDG ANPRM cited as "FR Doc. 2025-18226" vs SPEC "90 FR 46592"; §18(a)(3); MAS framework; "≤93-day Treasuries" / "7 days' notice" details. Then drop `_draft`, fix README's contradictory "DRAFT"/"author-reviewed", reseed.
+- [x] 🤝 **GENIUS status re-verification** — what happened at the Jul 18 final-rules deadline; re-verify "8 NPRMs, zero finals", "no §5 approvals", "pre-effective-date" copy (PRD/README/seed). If the law moved → registry version bump (demo beat).
 - [ ] 🤖 **Wording** — PRD:15 "permitted payment stablecoin"; README/PRD tagline → permitted-issuer framing; rename roadmap `assert_permitted` → `assert_pathway_qualified`; soften "nothing to subpoena but the chain".
 
 ### Should-fix (cheap credibility)
-- [ ] 🤖 **Program tests (LiteSVM)** — happy path, authority gating, §18-never-qualified, subtype grid, Unknown unwritable, citation limits at exact boundaries (incl. multi-byte §), versioning, uncited-qualification regression, re-init rejected, max-size tx < 1232 bytes.
+- [x] 🤖 **Program tests (LiteSVM)** — happy path, authority gating, §18-never-qualified, subtype grid, Unknown unwritable, citation limits at exact boundaries (incl. multi-byte §), versioning, uncited-qualification regression, re-init rejected, max-size tx < 1232 bytes.
 - [ ] 🤖 **SDK tests** — queryRegistry never throws (miss/reject/hang/truncated/bad enum/bad base58); allowed only for PathwayQualified; citationHash golden vectors; selector blocks on mismatch/non-devnet; no pay if pre-pay attest fails.
 - [ ] 🤖 **CI** — GitHub Actions: anchor build, tsc, tests, examiner build; badge in README.
 - [ ] 🤖 **Examiner robustness** — `error.tsx`/`not-found.tsx`; RPC error ≠ 404; /supervision gPA try/catch + row cap; stop importing `scripts/lib` (keypair loader) into the Next bundle; disclaimer above the citations; `encodeURIComponent` + `<label>` on address input; docket table overflow-x.
@@ -58,7 +58,7 @@ npm SDK publish · signed verdicts · CDP facilitator as primary · Token-2022 p
 - [ ] 🤖 **Program tests** — LiteSVM suite: init/upsert/bump/set_citation_basis happy paths + every invariant (§18-never-qualified, subtype iff federal, Unknown unwritable, citation limits, authority gating).
 - [ ] 🤖 **SDK tests** — fail-closed behavior (PDA miss, RPC error, malformed data → Unknown/blocked), citation-hash determinism, countersignature lookup.
 - [ ] 🤖 **CI** — GitHub Actions: program build, root typecheck, tests, examiner build. Green badge in README.
-- [ ] 🤖 **CPI `assert_permitted(mint)`** — the enforcement-ladder rung: an onchain instruction other programs can CPI to gate on the registry. Small program addition + one integration test + docs. (Answers "why is this a blockchain" in code.)
+- [ ] 🤖 **CPI `assert_pathway_qualified(mint)`** (renamed — "permitted" attaches to issuers) — the enforcement-ladder rung: an onchain instruction other programs can CPI to gate on the registry. Small program addition + one integration test + docs. (Answers "why is this a blockchain" in code.)
 - [ ] 🤖 **RPC reliability** — Helius (or similar) devnet key via `RPC_URL` everywhere; retire public-RPC flakiness from the demo path.
 - [ ] 🤖 **Upstream bug report** — file the `@x402/svm` selector-drop issue with repro (ecosystem credibility; reference in submission).
 - [ ] 🤖 **Code-review pass** — security + quality review of program and SDK (judges may read code).
