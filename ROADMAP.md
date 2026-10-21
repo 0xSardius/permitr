@@ -22,7 +22,7 @@ Phases 1–4 are kept for history; anything not listed here is cut or post-hacka
 - [ ] 🧑 **Back up program keypair** — local copy at `~/.config/solana/backups/` done Oct 20; off-machine copy pending.
 - [ ] 🧑 **Citation review** — *Oct 20: primary-source re-verification applied (SPEC §2); USDC reclassified (v3). Open: `_draft` decision / author book review; re-issue on-chain countersignatures with corrected text; refresh examiner home-page samples to v3 attestations.* Original note: all 5 seed files still `_draft`. Resolve strings outside SPEC §2's verified set: USDG ANPRM cited as "FR Doc. 2025-18226" vs SPEC "90 FR 46592"; §18(a)(3); MAS framework; "≤93-day Treasuries" / "7 days' notice" details. Then drop `_draft`, fix README's contradictory "DRAFT"/"author-reviewed", reseed.
 - [x] 🤝 **GENIUS status re-verification** — what happened at the Jul 18 final-rules deadline; re-verify "8 NPRMs, zero finals", "no §5 approvals", "pre-effective-date" copy (PRD/README/seed). If the law moved → registry version bump (demo beat).
-- [ ] 🤖 **Wording** — PRD:15 "permitted payment stablecoin"; README/PRD tagline → permitted-issuer framing; rename roadmap `assert_permitted` → `assert_pathway_qualified`; soften "nothing to subpoena but the chain".
+- [x] 🤖 **Wording** — PRD:15 "permitted payment stablecoin"; README/PRD tagline → permitted-issuer framing; rename roadmap `assert_permitted` → `assert_pathway_qualified`; soften "nothing to subpoena but the chain".
 
 ### Should-fix (cheap credibility)
 - [x] 🤖 **Program tests (LiteSVM)** — happy path, authority gating, §18-never-qualified, subtype grid, Unknown unwritable, citation limits at exact boundaries (incl. multi-byte §), versioning, uncited-qualification regression, re-init rejected, max-size tx < 1232 bytes.
