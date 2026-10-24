@@ -20,7 +20,7 @@ Phases 1–4 are kept for history; anything not listed here is cut or post-hacka
 - [x] 🤖 **Agent demo fixes** — model id `claude-sonnet-5` → `claude-sonnet-5-5`; strip `raw` (bigint) from `screenMint` result; host allowlist + one purchase per run.
 - [ ] 🧑 **Top up CDP agent wallet SOL** (0.00125 SOL as of Oct 18).
 - [ ] 🧑 **Back up program keypair** — local copy at `~/.config/solana/backups/` done Oct 20; off-machine copy pending.
-- [ ] 🧑 **Citation review** — *Oct 20: primary-source re-verification applied (SPEC §2); USDC reclassified (v3). Open: `_draft` decision / author book review; re-issue on-chain countersignatures with corrected text; refresh examiner home-page samples to v3 attestations.* Original note: all 5 seed files still `_draft`. Resolve strings outside SPEC §2's verified set: USDG ANPRM cited as "FR Doc. 2025-18226" vs SPEC "90 FR 46592"; §18(a)(3); MAS framework; "≤93-day Treasuries" / "7 days' notice" details. Then drop `_draft`, fix README's contradictory "DRAFT"/"author-reviewed", reseed.
+- [ ] 🧑 **Citation review** — *Oct 20: primary-source re-verification applied (SPEC §2); USDC reclassified (v3). Open: `_draft` decision / author book review. Oct 23: on-chain countersignatures re-issued with corrected text; examiner home-page samples refreshed to v3 attestations.* Original note: all 5 seed files still `_draft`. Resolve strings outside SPEC §2's verified set: USDG ANPRM cited as "FR Doc. 2025-18226" vs SPEC "90 FR 46592"; §18(a)(3); MAS framework; "≤93-day Treasuries" / "7 days' notice" details. Then drop `_draft`, fix README's contradictory "DRAFT"/"author-reviewed", reseed.
 - [x] 🤝 **GENIUS status re-verification** — what happened at the Jul 18 final-rules deadline; re-verify "8 NPRMs, zero finals", "no §5 approvals", "pre-effective-date" copy (PRD/README/seed). If the law moved → registry version bump (demo beat).
 - [x] 🤖 **Wording** — PRD:15 "permitted payment stablecoin"; README/PRD tagline → permitted-issuer framing; rename roadmap `assert_permitted` → `assert_pathway_qualified`; soften "nothing to subpoena but the chain".
 
@@ -28,10 +28,10 @@ Phases 1–4 are kept for history; anything not listed here is cut or post-hacka
 - [x] 🤖 **Program tests (LiteSVM)** — happy path, authority gating, §18-never-qualified, subtype grid, Unknown unwritable, citation limits at exact boundaries (incl. multi-byte §), versioning, uncited-qualification regression, re-init rejected, max-size tx < 1232 bytes.
 - [ ] 🤖 **SDK tests** — queryRegistry never throws (miss/reject/hang/truncated/bad enum/bad base58); allowed only for PathwayQualified; citationHash golden vectors; selector blocks on mismatch/non-devnet; no pay if pre-pay attest fails.
 - [ ] 🤖 **CI** — GitHub Actions: anchor build, tsc, tests, examiner build; badge in README.
-- [ ] 🤖 **Examiner robustness** — `error.tsx`/`not-found.tsx`; RPC error ≠ 404; /supervision gPA try/catch + row cap; stop importing `scripts/lib` (keypair loader) into the Next bundle; disclaimer above the citations; `encodeURIComponent` + `<label>` on address input; docket table overflow-x.
-- [ ] 🤖 **Attestation robustness** — post-pay attestation failure returns tx sig + `attestationError` (pending record on disk); never attest Allowed for an unsettled payment; `sendIxs` checks PDA exists before retry; RPC/fetch timeouts → Unknown.
-- [ ] 🤖 **RPC reliability** — Helius devnet `RPC_URL` everywhere incl. Vercel.
-- [ ] 🤖 **Repo hygiene** — stale "Day 2"/"no screening yet" headers; move spikes to `scripts/spikes/`; `dotenv` to deps; `sdk/` stops importing from `scripts/`.
+- [x] 🤖 **Examiner robustness** *(Oct 23)* — `error.tsx`/`not-found.tsx`; RPC error ≠ 404; /supervision gPA try/catch + row cap; stop importing `scripts/lib` (keypair loader) into the Next bundle; disclaimer above the citations; `encodeURIComponent` + `<label>` on address input; docket table overflow-x.
+- [x] 🤖 **Attestation robustness** *(Oct 23)* — post-pay attestation failure returns tx sig + `attestationError` (pending record on disk); never attest Allowed for an unsettled payment; `sendIxs` checks PDA exists before retry; RPC/fetch timeouts → Unknown.
+- [ ] 🤖 **RPC reliability** — Helius devnet `RPC_URL` everywhere incl. Vercel. *(Oct 23: every SDK/script/examiner path now reads `RPC_URL` via `sdk/rpc.ts`; still needs a Helius key set locally + on Vercel.)*
+- [ ] 🤖 **Repo hygiene** — stale "Day 2"/"no screening yet" headers; move spikes to `scripts/spikes/`; `dotenv` to deps; ~~`sdk/` stops importing from `scripts/`~~ (done Oct 23).
 - [ ] 🤖 *(Maybe, ~½ day)* **CPI `assert_pathway_qualified(mint)`** — read-only record + config, require qualified + cited + current version, return data; one LiteSVM test.
 
 ### Story & submission
