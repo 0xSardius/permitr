@@ -2,28 +2,30 @@ import { redirect } from "next/navigation";
 
 // One sample per gradation — the registry doesn't say yes/no, it says HOW
 // (or why not), and each kind of decision leaves a different audit record.
+// All issued Oct 23, 2026 under registry v3 (hash-verified against the
+// current record); regenerate after any registry version bump.
 const SAMPLES = [
   {
-    address: "8t9TGiSPjjDj4gsYkC4HqsazUDUSkSCoSZiAi4C25vfK",
+    address: "B2ZWYZn6YdtqDPAUJ2sWRCBRkRVEhHwkaar3SHbJWTFJ",
     label:
-      "Allowed — USDC (Circle), federal qualified pathway; agent purchased a compliance verdict",
+      "Allowed — USDC (Circle), anticipated State qualified pathway; agent purchased a compliance verdict",
   },
   {
-    address: "HwRxY1t1w3iPRnk5xoX43QiYe4P2ug8ysdzRYq35QYEy",
+    address: "5wYWuUwpyqLcaECscV9DhJX2KCbCiJAGoGqW1LgLmZBZ",
     label:
       "Rerouted — non-qualified asset refused, paid with pathway-qualified USDC instead",
   },
   {
-    address: "4Vx6rgL8uT4Fb6orbHsy2pn2NjS3GfVJAS6tLyhv2S7W",
+    address: "Gr87yFxL5jpgt4Z5KG7dzndWAbQ1KPZF4xTJd3sijiTM",
     label: "Blocked — ShadyUSD, no statutory pathway (§3(a), §3(g))",
   },
   {
-    address: "AYrF49PjGsASvR4C4SBTHJuWrWh1BVffHDadMYhoYGJe",
+    address: "556uoAvf85eU4vLxZEPhWX7J3hJ9U5MQHZ4b35XTyDg8",
     label:
       "Blocked, with a path — USDG (MAS, Singapore): §18 exception identified, conditions unmet (no Treasury comparability determination)",
   },
   {
-    address: "D3SGdXV2VkwUF6CcDVUd6L2QB3adURvuWWzsnMgdXktg",
+    address: "HyhjCc97ADZ4Mmc55F9wZvXdVFcXwJm96XnLVnvdPaXp",
     label:
       "Blocked, fail-closed — unregistered mint (wSOL): no registry record, unknown is never allowed",
   },
@@ -32,7 +34,7 @@ const SAMPLES = [
 async function lookup(formData: FormData) {
   "use server";
   const addr = String(formData.get("address") ?? "").trim();
-  if (addr) redirect(`/a/${addr}`);
+  if (addr) redirect(`/a/${encodeURIComponent(addr)}`);
 }
 
 export default function Home() {
@@ -50,8 +52,12 @@ export default function Home() {
         it as a plain-English audit record.
       </p>
       <form className="lookup" action={lookup}>
+        <label htmlFor="address">Attestation address</label>
         <input
+          id="address"
           name="address"
+          autoComplete="off"
+          spellCheck={false}
           placeholder="Attestation address (base58)"
           required
         />

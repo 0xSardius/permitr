@@ -54,7 +54,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function AuditRecord({ params }: Props) {
   const { address } = await params;
-  const rec = await loadAttestation(address).catch(() => null);
+  // null = provably absent (or malformed) -> 404; an RPC failure throws to
+  // error.tsx, so an outage never reads as "no such record"
+  const rec = await loadAttestation(address);
   if (!rec) notFound();
   if (rec.kind === "foreign") return <ForeignRecord rec={rec} />;
   const countersignatures = await getCountersignatures(rec.decoded.mint).catch(
@@ -133,6 +135,13 @@ export default async function AuditRecord({ params }: Props) {
           <span style={{ color: "var(--muted)" }}>{status?.plain}</span>
         </dd>
       </dl>
+
+      <p className="notice">
+        <strong>Not a legal determination.</strong> The citations below are
+        the public-law basis Permitr&rsquo;s registry recorded for this
+        classification. They are a research mirror of statute and proposed
+        rules, not legal advice and not a finding by any regulator.
+      </p>
 
       <h2>
         {pinnedCitations || !rec.record

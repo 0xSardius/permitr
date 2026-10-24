@@ -173,13 +173,31 @@ a {
   font-size: 0.85rem;
 }
 
+/* inline notice — the legal-status disclaimer, placed before citations */
+.notice {
+  border-left: 3px solid var(--rule);
+  padding: 0.4rem 0 0.4rem 0.9rem;
+  margin: 0.8rem 0 1.2rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
 form.lookup {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.6rem;
   margin: 1.4rem 0;
 }
+form.lookup label {
+  flex-basis: 100%;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
 form.lookup input {
   flex: 1;
+  min-width: 0;
   font: inherit;
   padding: 0.55rem 0.8rem;
   border: 1px solid var(--rule);
@@ -202,6 +220,9 @@ ul.samples li {
 }
 
 /* ── supervision docket ── */
+.docket-wrap {
+  overflow-x: auto;
+}
 table.docket {
   width: 100%;
   border-collapse: collapse;

@@ -3,6 +3,7 @@ import {
   STATUS_PLAIN,
   classifyDecision,
   listPaymentAttestations,
+  DOCKET_ROW_CAP,
 } from "../../lib/chain";
 
 export const revalidate = 120;
@@ -21,8 +22,8 @@ function fmt(ts: bigint): string {
 }
 
 export default async function Supervision() {
-  const records = await listPaymentAttestations().catch(() => null);
-  if (!records)
+  const docket = await listPaymentAttestations().catch(() => null);
+  if (!docket)
     return (
       <>
         <h1>Permitr Supervision View</h1>
@@ -34,6 +35,8 @@ export default async function Supervision() {
         </div>
       </>
     );
+  const { records, undecodable } = docket;
+  const rows = records.slice(0, DOCKET_ROW_CAP);
   const counts = { total: records.length, blocked: 0, rerouted: 0, allowed: 0, anomalous: 0 };
   for (const r of records) {
     const { banner } = classifyDecision(r.decoded.decision, r.decoded.status);
@@ -58,9 +61,17 @@ export default async function Supervision() {
         allowed, {counts.rerouted} rerouted, {counts.blocked} blocked
         {counts.anomalous > 0 && `, ${counts.anomalous} anomalous`}. Each entry
         links to its full audit record.
+        {undecodable > 0 &&
+          ` ${undecodable} account${undecodable === 1 ? "" : "s"} under the Permitr credential could not be decoded and ${undecodable === 1 ? "is" : "are"} excluded from these counts.`}
       </p>
 
       <h2>Docket</h2>
+      {records.length > rows.length && (
+        <p style={{ color: "var(--muted)", fontSize: "0.85rem" }}>
+          Showing the {rows.length} most recent of {records.length} decisions.
+        </p>
+      )}
+      <div className="docket-wrap">
       <table className="docket">
         <thead>
           <tr>
@@ -73,7 +84,7 @@ export default async function Supervision() {
           </tr>
         </thead>
         <tbody>
-          {records.map((r) => {
+          {rows.map((r) => {
             const v = classifyDecision(r.decoded.decision, r.decoded.status);
             return (
             <tr key={r.address}>
@@ -96,6 +107,7 @@ export default async function Supervision() {
           })}
         </tbody>
       </table>
+      </div>
       <p style={{ color: "var(--muted)", fontSize: "0.85rem" }}>
         Preview scope: decisions attested under the Permitr credential on
         Solana devnet. Roadmap: filters by entity/period, CSV export, and

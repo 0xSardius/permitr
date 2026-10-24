@@ -5,11 +5,11 @@
  * the citation hash. Everything rendered is read from chain; nothing is
  * trusted from the URL beyond the attestation address itself.
  */
-import { address, createSolanaRpc } from "@solana/kit";
+import { address, fetchEncodedAccount, isAddress } from "@solana/kit";
 import {
+  decodeAttestation,
   deriveAttestationPda,
   deserializeAttestationData,
-  fetchMaybeAttestation,
   fetchSchema,
   getAttestationDecoder,
 } from "sas-lib";
@@ -33,9 +33,8 @@ export const PERMITR_CREDENTIAL =
 export const PERMITR_PAYMENT_SCHEMA =
   "8fi4naNQJYMQ7uWpvBGMWbrvuvyf6vgp7eLvbTHTJb2Y";
 
-const rpc = createSolanaRpc(
-  process.env.RPC_URL ?? "https://api.devnet.solana.com",
-);
+import { rpc } from "../../../sdk/rpc";
+const SAS_PROGRAM = "22zoJMtdu4tQc2PzL74ZUT7FrwgB1Udec8DdW4yw4BdG";
 const sasRpc = rpc as unknown as Parameters<typeof fetchSchema>[0];
 
 export type DecodedAttestation = {
@@ -148,18 +147,25 @@ export type ExaminerRecord = {
   versionMatches: boolean | null;
 };
 
+/** Resolves null ONLY when the account provably does not exist (or the
+ * address is malformed, or the account is not an SAS attestation). RPC
+ * failures throw, so an outage renders as an error page — never as "not
+ * found" and never as a fail-closed block. */
 export async function loadAttestation(
   attestationAddress: string,
 ): Promise<ExaminerRecord | ForeignAttestation | null> {
-  const maybe = await fetchMaybeAttestation(
-    sasRpc,
-    address(attestationAddress) as Parameters<
-      typeof fetchMaybeAttestation
-    >[1],
-  );
-  if (!maybe.exists) return null;
-
-  const att = maybe.data;
+  if (!isAddress(attestationAddress)) return null;
+  const account = await fetchEncodedAccount(rpc, address(attestationAddress));
+  if (!account.exists) return null;
+  // any other account (a wallet, a mint, an SAS credential…) is not an
+  // attestation: no audit record lives here
+  if (String(account.programAddress) !== SAS_PROGRAM) return null;
+  let att;
+  try {
+    att = decodeAttestation(account).data;
+  } catch {
+    return null;
+  }
   const issuedByPermitr =
     String(att.credential) === PERMITR_CREDENTIAL &&
     String(att.schema) === PERMITR_PAYMENT_SCHEMA;
@@ -183,14 +189,14 @@ export async function loadAttestation(
     att.data as Uint8Array,
   );
 
-  // cross-reference the registry record for the evaluated mint
+  // cross-reference the registry record for the evaluated mint. A missing
+  // record is meaningful (fail-closed block); an RPC error is not — it throws
+  // rather than render "no registry record".
   let record: IssuerRecord | null = null;
-  try {
+  if (isAddress(decoded.mint)) {
     const [pda] = await findRecordPda({ mint: address(decoded.mint) });
     const maybeRecord = await fetchMaybeIssuerRecord(rpc, pda);
     record = maybeRecord.exists ? maybeRecord.data : null;
-  } catch {
-    record = null;
   }
 
   const fields = ["pathway", "status", "reserve", "redemption"] as const;
@@ -235,16 +241,18 @@ export async function loadAttestation(
 
 export { deriveAttestationPda };
 
-const SAS_PROGRAM = "22zoJMtdu4tQc2PzL74ZUT7FrwgB1Udec8DdW4yw4BdG";
-
 /**
  * Supervision view: enumerate every payment attestation issued under the
  * Permitr credential, directly from chain (memcmp on credential+schema at
  * their fixed offsets in the SAS attestation layout — no indexer).
  */
-export async function listPaymentAttestations(): Promise<
-  { address: string; decoded: DecodedAttestation }[]
-> {
+/** Rows rendered on the docket (most recent first). */
+export const DOCKET_ROW_CAP = 200;
+
+export async function listPaymentAttestations(): Promise<{
+  records: { address: string; decoded: DecodedAttestation }[];
+  undecodable: number;
+}> {
   const accounts = await rpc
     .getProgramAccounts(address(SAS_PROGRAM), {
       encoding: "base64",
@@ -275,6 +283,7 @@ export async function listPaymentAttestations(): Promise<
   );
   const decoder = getAttestationDecoder();
   const out: { address: string; decoded: DecodedAttestation }[] = [];
+  let undecodable = 0;
   for (const acc of accounts) {
     try {
       const bytes = Buffer.from(acc.account.data[0], "base64");
@@ -285,9 +294,9 @@ export async function listPaymentAttestations(): Promise<
       );
       out.push({ address: acc.pubkey, decoded });
     } catch {
-      // skip undecodable accounts
+      undecodable++; // counted and disclosed, never silently dropped
     }
   }
   out.sort((a, b) => Number(b.decoded.timestamp - a.decoded.timestamp));
-  return out;
+  return { records: out, undecodable };
 }
