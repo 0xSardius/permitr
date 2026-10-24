@@ -25,6 +25,12 @@ const signer = process.env.CDP_API_KEY_ID
 const result = await permitrPay(`${base}/verdict?mint=${mint}`, signer, wallet);
 
 console.log(`paid ${result.paidWith.slice(0, 8)}… for the verdict (tx ${result.txSignature?.slice(0, 16)}…)`);
-console.log(`payment attested: ${result.paymentAttestation.attestation}`);
+if (result.paymentAttestation)
+  console.log(`payment attested: ${result.paymentAttestation.attestation}`);
+else
+  console.error(
+    `⚠ payment settled but NOT attested: ${result.attestationError ?? "no payment made"}` +
+      (result.pendingRecord ? ` (pending record: ${result.pendingRecord})` : ""),
+  );
 console.log("\n--- purchased compliance report ---");
 console.log(JSON.stringify(JSON.parse(await result.response.text()), null, 2));

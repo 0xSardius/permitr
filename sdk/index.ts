@@ -8,6 +8,7 @@
  * upstream may ever interpret "no verdict" as "proceed".
  */
 import { address, type Address, type Rpc, type SolanaRpcApi } from "@solana/kit";
+import { RPC_TIMEOUT_MS, withTimeout } from "./rpc";
 import {
   fetchMaybeIssuerRecord,
   findRecordPda,
@@ -87,10 +88,16 @@ const PERMITTED_PATHWAYS: readonly Pathway[] = [
 export async function queryRegistry(
   rpc: Rpc<SolanaRpcApi>,
   mint: string,
+  opts: { timeoutMs?: number } = {},
 ): Promise<Verdict> {
   try {
     const [recordPda] = await findRecordPda({ mint: address(mint) });
-    const maybe = await fetchMaybeIssuerRecord(rpc, recordPda);
+    // a hung RPC is a failure like any other: time out -> Unknown -> blocked
+    const maybe = await withTimeout(
+      fetchMaybeIssuerRecord(rpc, recordPda),
+      opts.timeoutMs ?? RPC_TIMEOUT_MS,
+      "registry read",
+    );
     if (!maybe.exists) return unknownVerdict(mint); // fail closed: no record => Unknown => blocked
 
     const r = maybe.data;

@@ -19,16 +19,22 @@ import {
 import type { PaymentRequirements } from "@x402/core/types";
 import { registerExactSvmScheme } from "@x402/svm/exact/client";
 import type { KeyPairSigner, TransactionSigner } from "@solana/kit";
+import { mkdirSync, writeFileSync } from "node:fs";
+import path from "node:path";
 import { queryRegistry, type Verdict } from "./index";
 import { citationHash } from "./citation-hash";
 import { Decision, emitPaymentAttestation } from "./attest";
-import { rpc } from "../scripts/lib";
+import { rpc } from "./rpc";
 
 /** Devnet only (CLAUDE.md hard rule 3): offers on any other network are never
  * screened as payable and never signed. */
 export const SOLANA_DEVNET = "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1";
 /** Default per-payment cap in token base units (0.1 of a 6-decimal stablecoin). */
 export const DEFAULT_MAX_AMOUNT = 100_000n;
+/** Ceiling for each HTTP leg (the 402 offer, the paid request). */
+export const HTTP_TIMEOUT_MS = 30_000;
+/** Where a settled-but-unattested payment is recorded for later re-attestation. */
+export const PENDING_DIR = path.join(process.cwd(), ".permitr", "pending");
 
 const NA_PATHWAY = 255; // no record → no pathway byte; Examiner renders "n/a"
 const ZERO_HASH = new Uint8Array(32);
@@ -54,14 +60,48 @@ export class PermitrBlockError extends Error {
   }
 }
 
+/** The payment was attempted but did not verifiably settle. No Allowed or
+ * Rerouted attestation is written for it — only settled payments are
+ * attested as paid (blocks screened beforehand stay attested). */
+export class PermitrSettlementError extends Error {
+  constructor(
+    public screenings: Screening[],
+    public httpStatus: number,
+    public txSignature: string | null,
+  ) {
+    super(
+      `payment did not settle (HTTP ${httpStatus}${txSignature ? `, tx ${txSignature}` : ", no settlement tx"}); no payment attestation written`,
+    );
+    this.name = "PermitrSettlementError";
+  }
+}
+
 export type PermitrPayResult = {
   response: Response;
   screenings: Screening[];
   decision: Decision;
   paidWith: string;
   txSignature: string | null;
-  paymentAttestation: { attestation: string; signature: string };
+  /** null when no payment was made, or when attesting a settled payment
+   * failed — see attestationError / pendingRecord. */
+  paymentAttestation: { attestation: string; signature: string } | null;
+  /** Set when the payment SETTLED but its attestation could not be written.
+   * The money moved; the audit record is owed. */
+  attestationError?: string;
+  /** Path of the on-disk record holding everything needed to re-attest. */
+  pendingRecord?: string;
 };
+
+function writePending(record: object): string | undefined {
+  try {
+    mkdirSync(PENDING_DIR, { recursive: true });
+    const file = path.join(PENDING_DIR, `${Date.now()}.json`);
+    writeFileSync(file, JSON.stringify(record, null, 2) + "\n");
+    return file;
+  } catch {
+    return undefined; // read-only fs: the error is still returned to the caller
+  }
+}
 
 function attestationFields(v: Verdict) {
   const raw = v.raw;
@@ -110,7 +150,7 @@ export async function permitrPay(
   const now = () => Math.floor(Date.now() / 1000);
 
   // 1. fetch the offer
-  const offer = await fetch(url);
+  const offer = await fetch(url, { signal: AbortSignal.timeout(HTTP_TIMEOUT_MS) });
   if (offer.status !== 402)
     return {
       response: offer,
@@ -118,7 +158,7 @@ export async function permitrPay(
       decision: Decision.Allowed,
       paidWith: "none",
       txSignature: null,
-      paymentAttestation: { attestation: "", signature: "" },
+      paymentAttestation: null, // nothing was paid, nothing to attest
     };
   const header = offer.headers.get("payment-required");
   if (!header) throw new Error("402 without PAYMENT-REQUIRED header");
@@ -191,27 +231,36 @@ export async function permitrPay(
   });
   registerExactSvmScheme(client, { signer, networks: [SOLANA_DEVNET] });
   const fetchWithPay = wrapFetchWithPayment(fetch, client);
-  let response = await fetchWithPay(url);
+  const paidFetch = () =>
+    fetchWithPay(url, { signal: AbortSignal.timeout(HTTP_TIMEOUT_MS) });
+  let response = await paidFetch();
   if (response.status === 402) {
     // The x402.org devnet facilitator intermittently fails simulation under
     // load; one paced retry makes the demo path reliable.
     await new Promise((r) => setTimeout(r, 2_500));
-    response = await fetchWithPay(url);
+    response = await paidFetch();
   }
 
   const responseHeader = response.headers.get("payment-response");
-  const settle = responseHeader
-    ? decodePaymentResponseHeader(responseHeader)
-    : null;
-  const txSignature = settle?.transaction ?? null;
+  let settle: ReturnType<typeof decodePaymentResponseHeader> | null = null;
+  try {
+    settle = responseHeader ? decodePaymentResponseHeader(responseHeader) : null;
+  } catch {
+    settle = null; // undecodable settlement header: treated as unsettled
+  }
+  const txSignature = settle?.transaction || null;
+  // only a 2xx with a successful settlement carrying a tx signature counts as
+  // paid; anything else is never attested as Allowed/Rerouted
+  if (!response.ok || !settle?.success || !txSignature)
+    throw new PermitrSettlementError(screenings, response.status, txSignature);
 
   // 6. attest the payment; Rerouted if a higher-listed offer was blocked
   const firstOffered = accepts[0]?.asset;
   const decision =
     firstOffered === approved.mint ? Decision.Allowed : Decision.Rerouted;
   const f = attestationFields(approved.verdict);
-  const paymentAttestation = await emitPaymentAttestation(attestAuthority, {
-    paymentRef: txSignature ?? `unsettled-${now()}`,
+  const attestation = {
+    paymentRef: txSignature,
     mint: approved.mint,
     status: f.status,
     pathway: f.pathway,
@@ -219,14 +268,26 @@ export async function permitrPay(
     registryVersion: f.registryVersion,
     citationHash: f.hash,
     timestamp: now(),
-  });
-
-  return {
+  };
+  const result = {
     response,
     screenings,
     decision,
     paidWith: approved.mint,
     txSignature,
-    paymentAttestation,
   };
+  try {
+    const paymentAttestation = await emitPaymentAttestation(attestAuthority, attestation);
+    return { ...result, paymentAttestation };
+  } catch (e) {
+    // the payment settled: surface the tx and keep the owed record, never
+    // throw away proof that money moved
+    const attestationError = e instanceof Error ? e.message : String(e);
+    const pendingRecord = writePending({
+      ...attestation,
+      citationHash: Buffer.from(attestation.citationHash).toString("hex"),
+      attestationError,
+    });
+    return { ...result, paymentAttestation: null, attestationError, pendingRecord };
+  }
 }

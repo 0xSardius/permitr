@@ -10,3 +10,4 @@ test-ledger
 .env
 .env.*
 notes/
+.permitr/

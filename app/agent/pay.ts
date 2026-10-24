@@ -9,7 +9,11 @@ import "dotenv/config";
 import { CdpClient } from "@coinbase/cdp-sdk";
 import { cdpKitSigner } from "../../sdk/cdp-signer";
 import { Decision } from "../../sdk/attest";
-import { permitrPay, PermitrBlockError } from "../../sdk/permitr-pay";
+import {
+  permitrPay,
+  PermitrBlockError,
+  PermitrSettlementError,
+} from "../../sdk/permitr-pay";
 import { loadWallet } from "../../scripts/lib";
 
 const RESOURCE_URL = process.env.RESOURCE_URL ?? "http://localhost:4021/chapter";
@@ -47,15 +51,25 @@ try {
     console.log(
       `payment:  https://explorer.solana.com/tx/${result.txSignature}?cluster=devnet`,
     );
-  console.log(
-    `audit record: ${EXAMINER_URL}/a/${result.paymentAttestation.attestation}`,
-  );
+  if (result.paymentAttestation)
+    console.log(
+      `audit record: ${EXAMINER_URL}/a/${result.paymentAttestation.attestation}`,
+    );
+  else if (result.attestationError) {
+    console.error(`\n⚠ payment SETTLED but its attestation failed: ${result.attestationError}`);
+    if (result.pendingRecord) console.error(`  pending record: ${result.pendingRecord}`);
+    process.exitCode = 1;
+  }
   console.log("\n--- body ---");
   console.log(await result.response.text());
 
-  if (result.response.status !== 200) process.exit(1);
+  if (result.response.status !== 200 || !result.paymentAttestation) process.exit(1);
   console.log("\n✅ block → reroute → pay → attest complete — Day-3 DoD met.");
 } catch (e) {
+  if (e instanceof PermitrSettlementError) {
+    console.error(`\n⛔ ${e.message}`);
+    process.exit(1);
+  }
   if (e instanceof PermitrBlockError) {
     console.error(`\n⛔ ${e.message}`);
     console.error("Payment refused (fail-closed). Attested blocks:");

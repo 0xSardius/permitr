@@ -19,7 +19,7 @@ import {
   fetchMaybeAttestation,
   fetchSchema,
 } from "sas-lib";
-import { rpc } from "../scripts/lib";
+import { rpc } from "./rpc";
 
 import regulators from "../data/regulators.json";
 

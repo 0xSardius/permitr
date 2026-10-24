@@ -10,11 +10,13 @@
 import { generateKeyPairSigner, type Instruction, type KeyPairSigner } from "@solana/kit";
 import {
   deriveAttestationPda,
+  fetchMaybeAttestation,
   fetchSchema,
   getCreateAttestationInstruction,
   serializeAttestationData,
 } from "sas-lib";
-import { rpc, sendIxs } from "../scripts/lib";
+import { rpc } from "./rpc";
+import { sendIxs } from "./send";
 
 export const PERMITR_CREDENTIAL =
   "91qxSAdW6T3BshWVvP6o68hoLDrFfnFoeRNT68qP6ex8";
@@ -84,6 +86,11 @@ export async function emitPaymentAttestation(
     data: Buffer.from(data),
     expiry: BigInt(a.timestamp + 5 * 365 * 24 * 3600),
   });
-  const signature = await sendIxs(authority, [ix as unknown as Instruction]);
+  // a confirmation timeout can hide a landed attestation; never re-send one
+  // whose PDA already exists (the retry would fail "already in use")
+  const signature = await sendIxs(authority, [ix as unknown as Instruction], {
+    landed: async () =>
+      (await fetchMaybeAttestation(sasRpc, attestationPda)).exists,
+  });
   return { attestation: attestationPda, signature };
 }

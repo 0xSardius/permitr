@@ -18,7 +18,11 @@ import { CdpClient } from "@coinbase/cdp-sdk";
 import { cdpKitSigner } from "../../sdk/cdp-signer";
 import { queryRegistry } from "../../sdk/index";
 import { Decision } from "../../sdk/attest";
-import { permitrPay, PermitrBlockError } from "../../sdk/permitr-pay";
+import {
+  permitrPay,
+  PermitrBlockError,
+  PermitrSettlementError,
+} from "../../sdk/permitr-pay";
 import { loadWallet, rpc } from "../../scripts/lib";
 
 const RESOURCE_URL =
@@ -81,7 +85,9 @@ const buyResource = tool({
           citations: s.verdict.citations.filter((c) => c.field === "status"),
           blockAttestation: s.attestation ?? null,
         })),
-        paymentAttestation: r.paymentAttestation.attestation,
+        paymentAttestation: r.paymentAttestation?.attestation ?? null,
+        // settled but unattested: the audit record is owed, not silently lost
+        attestationError: r.attestationError ?? null,
         content: await r.response.text(),
       };
     } catch (e) {
@@ -95,6 +101,12 @@ const buyResource = tool({
             citations: s.verdict.citations,
             blockAttestation: s.attestation ?? null,
           })),
+        };
+      if (e instanceof PermitrSettlementError)
+        return {
+          outcome: "NotSettled",
+          reason: e.message,
+          txSignature: e.txSignature,
         };
       throw e;
     }
