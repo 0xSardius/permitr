@@ -15,7 +15,7 @@ Everyone screens the counterparty. Nobody certifies the coin. Permitr is a citat
 - **Permitr Registry** (Anchor program, Solana devnet) — one `IssuerRecord` PDA per SPL mint. Every substantive field carries a citation (statute § / proposed rule docket / agency action / foreign regime, with an optional book-analysis layer). Records pin the registry version they were authored under. Program-level invariants enforce the statute's structure — e.g. the §18 foreign-issuer *exception* can never be recorded as a permitted pathway (§2(12), §2(23)).
 - **Permitr Agent** (TypeScript, x402) — screens every mint offered in a 402 `accepts` list before paying. **Fail-closed allowlist:** a payment is allowed only for `PathwayQualified` mints; missing records, RPC errors, and everything else block.
 - **Permitr Attestations** (SAS) — every evaluated payment, blocks included, emits an onchain attestation pinning the verdict, pathway, citations hash, and registry version.
-- **Examiner View** (web) — renders any attestation as a plain-English audit record with citations, **live at [permitr.vercel.app](https://permitr.vercel.app)**. Every page independently recomputes the citation hash from the onchain registry. Sample records: [a blocked payment](https://permitr.vercel.app/a/4Vx6rgL8uT4Fb6orbHsy2pn2NjS3GfVJAS6tLyhv2S7W) · [a rerouted payment](https://permitr.vercel.app/a/HwRxY1t1w3iPRnk5xoX43QiYe4P2ug8ysdzRYq35QYEy). The trail an examiner can sign off on.
+- **Examiner View** (web) — renders any attestation as a plain-English audit record with citations, **live at [permitr.vercel.app](https://permitr.vercel.app)**. Every page independently recomputes the citation hash from the onchain registry. Sample records: [a blocked payment](https://permitr.vercel.app/a/Gr87yFxL5jpgt4Z5KG7dzndWAbQ1KPZF4xTJd3sijiTM) · [a rerouted payment](https://permitr.vercel.app/a/5wYWuUwpyqLcaECscV9DhJX2KCbCiJAGoGqW1LgLmZBZ). The trail an examiner can sign off on.
 
 ## Architecture
 
@@ -59,8 +59,8 @@ Paying requires devnet USDC + SOL in the payer (CDP server wallet via `.env` cre
 | Registry program | [`3cwNTm2FHSViLLm2gVp62DqS2ttLbHigXWw4XDTbo35Y`](https://explorer.solana.com/address/3cwNTm2FHSViLLm2gVp62DqS2ttLbHigXWw4XDTbo35Y?cluster=devnet) |
 | SAS credential (Permitr) | [`91qxSAdW6T3BshWVvP6o68hoLDrFfnFoeRNT68qP6ex8`](https://explorer.solana.com/address/91qxSAdW6T3BshWVvP6o68hoLDrFfnFoeRNT68qP6ex8?cluster=devnet) |
 | SAS schema (permitr-payment v1) | [`8fi4naNQJYMQ7uWpvBGMWbrvuvyf6vgp7eLvbTHTJb2Y`](https://explorer.solana.com/address/8fi4naNQJYMQ7uWpvBGMWbrvuvyf6vgp7eLvbTHTJb2Y?cluster=devnet) |
-| Sample block attestation (ShadyUSD rejected, §3(a) cited) | [`4Vx6rgL8uT4Fb6orbHsy2pn2NjS3GfVJAS6tLyhv2S7W`](https://explorer.solana.com/address/4Vx6rgL8uT4Fb6orbHsy2pn2NjS3GfVJAS6tLyhv2S7W?cluster=devnet) |
-| Sample rerouted-payment attestation | [`HwRxY1t1w3iPRnk5xoX43QiYe4P2ug8ysdzRYq35QYEy`](https://explorer.solana.com/address/HwRxY1t1w3iPRnk5xoX43QiYe4P2ug8ysdzRYq35QYEy?cluster=devnet) |
+| Sample block attestation (ShadyUSD rejected, §3(a) cited) | [`Gr87yFxL5jpgt4Z5KG7dzndWAbQ1KPZF4xTJd3sijiTM`](https://explorer.solana.com/address/Gr87yFxL5jpgt4Z5KG7dzndWAbQ1KPZF4xTJd3sijiTM?cluster=devnet) |
+| Sample rerouted-payment attestation | [`5wYWuUwpyqLcaECscV9DhJX2KCbCiJAGoGqW1LgLmZBZ`](https://explorer.solana.com/address/5wYWuUwpyqLcaECscV9DhJX2KCbCiJAGoGqW1LgLmZBZ?cluster=devnet) |
 | Sample x402 payment (devnet USDC) | [`4mFXX946…AnP9nL`](https://explorer.solana.com/tx/4mFXX946mvkfpYznVNJyQuzcFJRY4jdZQtuGdTdPNDoYPG1YGmKovu9ECYzVJ6C7TutiU4rbJEnEjDwdRpAnP9nL?cluster=devnet) |
 | ShadyUSD (fictional test mint) | `5pq1R1sx4xLW7YYjKLKr8dCPbFzahv7ppLDXAk5uXcxC` |
 

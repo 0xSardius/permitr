@@ -5,11 +5,17 @@
  *
  * Nonce = the mint address -> countersignatures are deterministically
  * discoverable from (credential, schema, mint). Idempotent.
+ *
+ * An existing countersignature whose onchain text differs from CERTS is
+ * reported as drift. `--reissue` closes it and re-creates it with the
+ * current text (same PDA: the mint is still the nonce).
  */
 import { type Instruction } from "@solana/kit";
 import { address } from "@solana/kit";
 import {
   deriveAttestationPda,
+  deserializeAttestationData,
+  getCloseAttestationInstruction,
   deriveCredentialPda,
   deriveSchemaPda,
   fetchMaybeAttestation,
@@ -39,7 +45,7 @@ const CERTS = [
     action: "NationalTrustCharterApproved",
     reference: "OCC final approval, First National Digital Currency Bank, N.A. (Circle), Jul 10, 2026",
     summary:
-      "SIMULATED countersignature citing a real agency action: OCC granted final approval for Circle's national trust bank (custody; non-issuer) Jul 10, 2026.",
+      "SIMULATED countersignature citing a real agency action: final approval of Circle's national trust bank, Jul 10, 2026 (per Circle). Per OCC CA 1356 the bank will not issue stablecoins.",
   },
   {
     mint: "CXk2AMBfi3TwaEL2468s6zP8xq9NxTXjp9gjMgzeUynM",
@@ -53,6 +59,8 @@ const CERTS = [
 
 const sasRpc = rpc as unknown as Parameters<typeof fetchSchema>[0];
 const authority = await loadWallet();
+const REISSUE = process.argv.includes("--reissue");
+const TEXT_FIELDS = ["issuer", "action", "reference", "summary"] as const;
 
 // credential (idempotent)
 const [credentialPda] = await deriveCredentialPda({
@@ -102,9 +110,34 @@ for (const cert of CERTS) {
     schema: schemaPda,
     nonce,
   });
-  if ((await fetchMaybeAttestation(sasRpc, attestationPda)).exists) {
-    console.log(`countersignature exists for ${cert.issuer}: ${attestationPda}`);
-    continue;
+  const existing = await fetchMaybeAttestation(sasRpc, attestationPda);
+  if (existing.exists) {
+    const onchain = deserializeAttestationData<Record<string, unknown>>(
+      schema.data,
+      existing.data.data as Uint8Array,
+    );
+    const drift = TEXT_FIELDS.filter((f) => onchain[f] !== cert[f]);
+    if (drift.length === 0) {
+      console.log(`countersignature current for ${cert.issuer}: ${attestationPda}`);
+      continue;
+    }
+    if (!REISSUE) {
+      console.log(
+        `countersignature DRIFT for ${cert.issuer} (${drift.join(", ")}): ${attestationPda} — rerun with --reissue`,
+      );
+      continue;
+    }
+    // close then re-create: separate transactions, the PDA must be freed first
+    const close = getCloseAttestationInstruction({
+      payer: authority,
+      authority,
+      credential: credentialPda,
+      attestation: attestationPda,
+    });
+    await sendIxs(authority, [close as unknown as Instruction], {
+      landed: async () => !(await fetchMaybeAttestation(sasRpc, attestationPda)).exists,
+    });
+    console.log(`closed stale countersignature (${drift.join(", ")}) for ${cert.issuer}`);
   }
   const data = serializeAttestationData(schema.data, {
     ...cert,
@@ -120,7 +153,9 @@ for (const cert of CERTS) {
     data: Buffer.from(data),
     expiry: BigInt(Math.floor(Date.now() / 1000) + 5 * 365 * 24 * 3600),
   });
-  await sendIxs(authority, [ix as unknown as Instruction]);
+  await sendIxs(authority, [ix as unknown as Instruction], {
+    landed: async () => (await fetchMaybeAttestation(sasRpc, attestationPda)).exists,
+  });
   console.log(`countersigned ${cert.issuer}: ${attestationPda}`);
 }
 
