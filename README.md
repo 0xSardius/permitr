@@ -80,7 +80,7 @@ scripts/                     deploy / seed / demo
 
 ## Status
 
-Hackathon build (BLI Legal Tech Hackathon 2026) — **Solana devnet only**. Seed registry covers four illustrative records: USDC (federal qualified), PYUSD (federal — with its Dec 2025 NYDFS→OCC pathway migration as the registry-versioning showcase), USDG (§18 foreign-issuer exception, conditions unmet — blocked with the cited path), and a fictional ShadyUSD (no pathway — blocked).
+Hackathon build (BLI Legal Tech Hackathon 2026) — **Solana devnet only**. Seed registry covers four illustrative records: USDC (state pathway — anticipated NY trust issuer), PYUSD (federal — with its Dec 2025 NYDFS→OCC pathway migration as the registry-versioning showcase), USDG (§18 foreign-issuer exception, conditions unmet — blocked with the cited path), and a fictional ShadyUSD (no pathway — blocked).
 
 As of Oct 20, 2026 no §5 approvals have been granted, no state regime is certified, and the Act is not yet effective (it takes effect Jan 18, 2027): **every classification is an anticipated pathway, cited, as of the registry version shown.**
 
