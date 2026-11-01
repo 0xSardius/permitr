@@ -1,4 +1,4 @@
-# Permitr — Road to Submission (due Oct 31, 2026)
+# Permitr — Road to Submission (submitted Oct 31, 2026)
 
 Working checklist from conference-week E2E slice → complete submission.
 Judging Nov 5–Dec 5, awards Dec 12. Owner key: 🧑 author-gated · 🤖 buildable · 🤝 both.
@@ -18,7 +18,7 @@ Phases 1–4 are kept for history; anything not listed here is cut or post-hacka
 - [x] 🤖 **Program upgrade deploy + reseed** on devnet; `pnpm verify-registry` green. *(Upgrade Oct 20, slot 513311065; registry v3 with USDC reclassified to StateQualified.)*
 - [x] 🤖 **SDK: devnet-only signing** — `registerExactSvmScheme(..., { networks: [devnet] })`; drop non-devnet `accepts`; selector requires exact match with the screened requirement (scheme/network/asset/amount/payTo); `maxAmount` cap.
 - [x] 🤖 **Agent demo fixes** — model id `claude-sonnet-5` → `claude-sonnet-5-5`; strip `raw` (bigint) from `screenMint` result; host allowlist + one purchase per run.
-- [ ] 🧑 **Top up CDP agent wallet SOL** (0.00125 SOL as of Oct 18).
+- [x] 🧑 **Top up CDP agent wallet SOL** *(2.5 SOL as of Oct 31)*.
 - [ ] 🧑 **Back up program keypair** — local copy at `~/.config/solana/backups/` done Oct 20; off-machine copy pending.
 - [ ] 🧑 **Citation review** — *Oct 20: primary-source re-verification applied (SPEC §2); USDC reclassified (v3). Open: `_draft` decision / author book review. Oct 23: on-chain countersignatures re-issued with corrected text; examiner home-page samples refreshed to v3 attestations.* Original note: all 5 seed files still `_draft`. Resolve strings outside SPEC §2's verified set: USDG ANPRM cited as "FR Doc. 2025-18226" vs SPEC "90 FR 46592"; §18(a)(3); MAS framework; "≤93-day Treasuries" / "7 days' notice" details. Then drop `_draft`, fix README's contradictory "DRAFT"/"author-reviewed", reseed.
 - [x] 🤝 **GENIUS status re-verification** — what happened at the Jul 18 final-rules deadline; re-verify "8 NPRMs, zero finals", "no §5 approvals", "pre-effective-date" copy (PRD/README/seed). If the law moved → registry version bump (demo beat).
@@ -38,10 +38,10 @@ Phases 1–4 are kept for history; anything not listed here is cut or post-hacka
 - [ ] 🧑→🤖 **Pitch deck** — interview (book/origin, primary ask, tone) → build → iterate. Frame per product dialogue: stablecoins as the wedge into "compliance status of asset/issuer/transaction under U.S. law"; ADAC flywheel slide.
 - [ ] 🤝 **Demo video** (3 min) + fallback cut.
 - [ ] 🧑 **Real book chapter** for the gated resource.
-- [ ] 🤝 **DoraHacks writeup** + rubric alignment.
-- [ ] 🤖 **Fresh E2E run** after reseed; re-record stale artifacts; README sample links (all 5).
+- [x] 🤝 **DoraHacks writeup** *(Oct 31)*.
+- [x] 🤖 **Fresh E2E run** *(Oct 31: `pnpm demo` green — block B5vqHkYi…, payment 91PsKk8w…, hashes match)*.
 - [ ] 🤝 **Rehearsals** ×2 clean.
-- [ ] 🧑 **Submit by Oct 24.**
+- [x] 🧑 **Submitted to DoraHacks Oct 31** — text archived locally in gitignored `notes/dorahacks-submission.md`; no deck or video (author decision).
 
 ### Product-dialogue candidates (optional — decide before building)
 - [ ] 🤝 **Source labeling completeness** — `CiteSource` already has Statute/ProposedRule/AgencyAction/ForeignRegime/BookSection; consider appending `FinalRule` and an explicit interpretation variant (append-only = Borsh-compatible), and surface the source label prominently in the Examiner.
